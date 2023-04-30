@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using DigitalBankManagement.Data;
 using DigitalBankManagement.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalBankManagement
@@ -39,12 +40,34 @@ namespace DigitalBankManagement
 				}
 				else
 				{
-					if(DateTime.UtcNow > session.LastUsed.AddMinutes(20)) // check whether the previous session has expired; 20 minutes of inactivity
-					{
-						sessions.Remove(session); // remove inactive session
-					}
+					RemoveIfExpired(context.Sessions, session);
+					
 				}
 			}
+		}
+
+		// checks whether a session has expired and returns true if expired and false if not
+		private static bool RemoveIfExpired(DbSet<SessionModel> sessions, SessionModel session)
+		{
+			if (DateTime.UtcNow > session.LastUsed.AddMinutes(20)) // check whether the previous session has expired; 20 minutes of inactivity
+			{
+				sessions.Remove(session); // remove inactive session
+				return true;
+			}
+			return false;
+		}
+
+		// Returns the session specified by sessionId or returns null if sessionId is invalid or expired
+		public static SessionModel? GetSession(ApplicationDbContext context, string sessionId)
+		{
+			SessionModel? session = context.Sessions.FirstOrDefault(s => s.SessionId == sessionId);
+			if(session != null) {
+				if(RemoveIfExpired(context.Sessions, session))
+				{
+					return null;
+				}
+			}
+			return session;
 		}
 	}
 }
