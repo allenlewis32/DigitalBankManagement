@@ -75,6 +75,8 @@ namespace DigitalBankManagement
 				{
 					return null;
 				}
+				session.LastUsed = DateTime.UtcNow;
+				context.SaveChanges();
 			}
 			return session;
 		}
