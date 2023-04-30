@@ -1,0 +1,15 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DigitalBankManagement.Models
+{
+	public class SessionModel
+	{
+		[Key]
+		public string SessionId { get; set; }
+		public int UserId { get; set; }
+		[ForeignKey("UserId")]
+		public UserModel User { get; set; }
+		public DateTime LastUsed { get; set; }
+	}
+}
