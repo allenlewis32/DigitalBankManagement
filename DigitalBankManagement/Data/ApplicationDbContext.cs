@@ -10,5 +10,6 @@ namespace DigitalBankManagement.Data
 		public DbSet<UserModel> Users { get; set; }
 		public DbSet<RoleModel> Roles { get; set; }
 		public DbSet<SessionModel> Sessions { get; set; }
+		public DbSet<AccountModel> Accounts { get; set; }
 	}
 }
