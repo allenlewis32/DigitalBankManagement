@@ -21,6 +21,8 @@ namespace DigitalBankManagement
 			SessionModel? session = sessions.FirstOrDefault(s => s.UserId == user.Id);
 			if(session != null)
 			{
+				session.LastUsed = DateTime.UtcNow;
+				context.SaveChanges();
 				return session.SessionId;
 			}
 			
