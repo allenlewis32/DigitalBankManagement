@@ -20,5 +20,9 @@ namespace DigitalBankManagement.Models
 		public AccountModel DebitAccount { get; set; }
 
 		public int Status { get; set; } // 0 - not yet reviewed; 1 - approved; -1 declined
+
+		public int? ApprovedBy { get; set; }
+		[ForeignKey("ApprovedBy")]
+		public UserModel Approver { get; set; }
 	}
 }
