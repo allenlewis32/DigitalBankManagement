@@ -104,7 +104,7 @@ namespace DigitalBankManagement.Controllers
 			}
 		}
 		
-		[HttpDelete]
+		[HttpGet]
 		[Route("Logout")]
 		public IActionResult Logout([FromHeader] string sessionId)
 		{
@@ -113,7 +113,7 @@ namespace DigitalBankManagement.Controllers
 				SessionModel? session = _context.Sessions.FirstOrDefault(s => s.SessionId == sessionId);
 				if(session == null)
 				{
-					return Problem("Invalid session id");
+					return Unauthorized("Invalid session id");
 				}
 				_context.Sessions.Remove(session);
 				_context.SaveChanges();
