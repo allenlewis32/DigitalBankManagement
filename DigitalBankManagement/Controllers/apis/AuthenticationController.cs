@@ -104,9 +104,9 @@ namespace DigitalBankManagement.Controllers
 			}
 		}
 		
-		[HttpPost]
+		[HttpDelete]
 		[Route("Logout")]
-		public IActionResult Logout([FromForm] string sessionId)
+		public IActionResult Logout([FromHeader] string sessionId)
 		{
 			try
 			{
