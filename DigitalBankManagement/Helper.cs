@@ -22,7 +22,6 @@ namespace DigitalBankManagement
 			if(session != null)
 			{
 				session.LastUsed = DateTime.UtcNow;
-				context.Sessions.Update(session);
 				context.SaveChanges();
 				return session.SessionId;
 			}
