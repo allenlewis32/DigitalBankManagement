@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalBankManagement
 {
-	public class SessionHelper
+	public class Helper
 	{
 		private static RandomNumberGenerator rng = RandomNumberGenerator.Create();
 		private static char[] chars = "abcdefghijklmnopqrstuvwxyz012345".ToCharArray();
 		private static int len = 24;
-		
+
 		// creates a unique session id, stores it in db and returns the id
 		public static string GenerateSessionId(ApplicationDbContext context, UserModel user)
 		{
@@ -41,7 +41,7 @@ namespace DigitalBankManagement
 				else
 				{
 					RemoveIfExpired(context.Sessions, session);
-					
+
 				}
 			}
 		}
@@ -61,13 +61,27 @@ namespace DigitalBankManagement
 		public static SessionModel? GetSession(ApplicationDbContext context, string sessionId)
 		{
 			SessionModel? session = context.Sessions.FirstOrDefault(s => s.SessionId == sessionId);
-			if(session != null) {
-				if(RemoveIfExpired(context.Sessions, session))
+			if (session != null)
+			{
+				if (RemoveIfExpired(context.Sessions, session))
 				{
 					return null;
 				}
 			}
 			return session;
+		}
+
+		// Returns user associated with a session
+		public static UserModel? GetUser(ApplicationDbContext context, string sessionId)
+		{
+			SessionModel? session = GetSession(context, sessionId);
+			UserModel? user = null;
+			if (session != null)
+			{
+				user = context.Users.First(u => u.Id == session.UserId);
+				user.Role = context.Roles.First(r => r.Id == user.RoleId);
+			}
+			return user;
 		}
 	}
 }
