@@ -19,7 +19,7 @@ namespace DigitalBankManagement
 			
 			// if a session for the user exists, return it
 			SessionModel? session = sessions.FirstOrDefault(s => s.UserId == user.Id);
-			if(session != null && !RemoveIfExpired(sessions, session))
+			if(session != null)
 			{
 				return session.SessionId;
 			}
