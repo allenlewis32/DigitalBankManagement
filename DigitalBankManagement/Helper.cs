@@ -16,6 +16,14 @@ namespace DigitalBankManagement
 		public static string GenerateSessionId(ApplicationDbContext context, UserModel user)
 		{
 			DbSet<SessionModel> sessions = context.Sessions;
+			
+			// if a session for the user exists, return it
+			SessionModel? session = sessions.FirstOrDefault(s => s.UserId == user.Id);
+			if(session != null && !RemoveIfExpired(sessions, session))
+			{
+				return session.SessionId;
+			}
+			
 			byte[] bytes = new byte[len];
 			char[] tmp = new char[len];
 			while (true)
@@ -26,7 +34,7 @@ namespace DigitalBankManagement
 					tmp[i] = chars[bytes[i] % chars.Length];
 				}
 				string sessionId = new string(tmp);
-				SessionModel? session = sessions.FirstOrDefault(s => s.SessionId == sessionId);
+				session = sessions.FirstOrDefault(s => s.SessionId == sessionId);
 				if (session == null) // check if the sessionId is unique
 				{
 					sessions.Add(new()
