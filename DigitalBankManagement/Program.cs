@@ -81,7 +81,8 @@ namespace DigitalBankManagement
 					Email = "",
 					RoleId = _context.Roles.First(r => r.Name == "admin").Id,
 					FirstName = "Admin",
-					LastName = ""
+					LastName = "",
+					Active = true
 				};
 				adminUser.PasswordHash = new PasswordHasher<UserModel>().HashPassword(adminUser, "Admin@123");
 				_context.Users.Add(adminUser);
