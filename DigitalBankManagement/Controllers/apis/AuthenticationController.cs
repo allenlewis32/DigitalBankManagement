@@ -27,6 +27,29 @@ namespace DigitalBankManagement.Controllers
 		{
 			try
 			{
+				// authorize
+				switch(registerModel.Role.ToLower())
+				{
+					case null:
+						return Problem("Role required");
+					case "admin": // admin can't be created using API
+						return Problem("Cannot create admin account");
+					case "manager": // manager can be created only by admin
+						bool authorized = false;
+						if(registerModel.SessionId != null)
+						{
+							// verify session and user role
+							UserModel? callingUser = Helper.GetUser(_context, registerModel.SessionId);
+							if(callingUser != null && callingUser.Role.Name.ToLower() == "admin") {
+								authorized = true;
+							}
+						}
+						if(!authorized)
+						{
+							return Unauthorized();
+						}
+						break;
+				}
 				if (_context.Users.FirstOrDefault(u => u.Email == registerModel.Email) != null)
 				{
 					return Conflict("User already exists");
@@ -38,11 +61,12 @@ namespace DigitalBankManagement.Controllers
 					RoleId = _context.Roles.FirstOrDefault(r => r.Name == registerModel.Role)!.Id,
 					FirstName = registerModel.FirstName,
 					LastName = registerModel.LastName,
+					Active = true,
 				};
 				user.PasswordHash = _passwordHasher.HashPassword(user, registerModel.Password);
 				_context.Users.Add(user);
 				_context.SaveChanges();
-				return Ok(SessionHelper.GenerateSessionId(_context, user));
+				return Ok(Helper.GenerateSessionId(_context, user));
 			}
 			catch
 			{
@@ -66,7 +90,7 @@ namespace DigitalBankManagement.Controllers
 				{
 					return Unauthorized("Invalid password");
 				}
-				return Ok(SessionHelper.GenerateSessionId(_context, user));
+				return Ok(Helper.GenerateSessionId(_context, user));
 			}
 			catch
 			{
