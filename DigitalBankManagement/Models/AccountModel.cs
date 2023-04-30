@@ -18,5 +18,7 @@ namespace DigitalBankManagement.Models
 		public DateTime DateCreated { get; set; }
 
 		public bool Active { get; set; }
+
+		public int Type { get; set; }
 	}
 }
