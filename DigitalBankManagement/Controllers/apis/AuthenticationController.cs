@@ -66,12 +66,18 @@ namespace DigitalBankManagement.Controllers
 				user.PasswordHash = _passwordHasher.HashPassword(user, registerModel.Password);
 				_context.Users.Add(user);
 				_context.SaveChanges();
-				return Ok(Helper.GenerateSessionId(_context, user));
+				return Ok(GetSessionIdAndRole(_context, user));
 			}
 			catch
 			{
 				return Problem("Unable to create user");
 			}
+		}
+
+		private static object GetSessionIdAndRole(ApplicationDbContext _context, UserModel user)
+		{
+			object sessionIdAndRole = new { sessionId = Helper.GenerateSessionId(_context, user), role = _context.Roles.First(r => r.Id == user.RoleId).Name };
+			return sessionIdAndRole;
 		}
 
 		[HttpPost]
@@ -90,7 +96,7 @@ namespace DigitalBankManagement.Controllers
 				{
 					return Unauthorized("Invalid password");
 				}
-				return Ok(Helper.GenerateSessionId(_context, user));
+				return Ok(GetSessionIdAndRole(_context, user));
 			}
 			catch
 			{
