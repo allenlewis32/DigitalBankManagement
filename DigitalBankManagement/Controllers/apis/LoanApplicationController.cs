@@ -110,7 +110,7 @@ namespace DigitalBankManagement.Controllers
 		{
 			decimal P = loan.Account.Amount;
 			decimal R = _context.Interests.First().Loan;
-			int N = loan.Duration * 12; // convert years to months
+			int N = loan.Duration;
 			decimal t = (decimal)Math.Pow((double)(1 + R / 1200), N);
 			decimal emi = P * R * t / (t - 1);
 			loan.Emi = emi;
