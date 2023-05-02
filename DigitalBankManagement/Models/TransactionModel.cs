@@ -14,7 +14,8 @@ namespace DigitalBankManagement.Models
 		public int? ToAccountId { get; set; }
 		[ForeignKey(nameof(ToAccountId))]
 		public AccountModel? ToAccount { get; set; }
-
 		public DateTime Time { get; set; }
+		[Column(TypeName = "decimal(12, 2)")]
+		public decimal Amount { get; set; }
 	}
 }
