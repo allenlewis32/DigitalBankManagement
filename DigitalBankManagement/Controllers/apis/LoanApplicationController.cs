@@ -9,10 +9,10 @@ namespace DigitalBankManagement.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class LoanController : ControllerBase
+	public class LoanApplicationController : ControllerBase
 	{
 		private readonly ApplicationDbContext _context;
-		public LoanController(ApplicationDbContext context)
+		public LoanApplicationController(ApplicationDbContext context)
 		{
 			_context = context;
 		}
