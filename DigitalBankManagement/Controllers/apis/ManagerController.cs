@@ -22,7 +22,7 @@ namespace DigitalBankManagement.Controllers
 			try
 			{
 				var user = Helper.GetUser(_context, sessionId);
-				if(user == null || user.Role.Name != "admin")
+				if (user == null || user.Role.Name != "admin")
 				{
 					return Unauthorized();
 				}
@@ -43,6 +43,27 @@ namespace DigitalBankManagement.Controllers
 					})
 					.Wait();
 				return Ok(managers);
+			}
+			catch
+			{
+				return Problem();
+			}
+		}
+
+		[HttpPost]
+		[Route("Disable")]
+		public IActionResult Disable([FromHeader] string sessionId, [FromForm] int managerId)
+		{
+			try
+			{
+				var user = Helper.GetUser(_context, sessionId);
+				if (user == null || user.Role.Name != "admin")
+				{
+					return Unauthorized();
+				}
+				_context.Users.First(user => user.Id == managerId).Active = false;
+				_context.SaveChanges();
+				return Ok();
 			}
 			catch
 			{
