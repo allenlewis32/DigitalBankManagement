@@ -86,7 +86,7 @@ namespace DigitalBankManagement.Controllers
 					Amount = application.Amount,
 					DateCreated = DateTime.UtcNow,
 					Active = true,
-					Type = 1,
+					Type = AccountModel.TypeLoan,
 				};
 				LoanModel loan = new()
 				{
