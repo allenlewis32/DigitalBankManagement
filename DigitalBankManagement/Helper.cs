@@ -83,7 +83,7 @@ namespace DigitalBankManagement
 			return session;
 		}
 
-		// Returns user associated with a session
+		// Returns user associated with a session and updates the lastUsed attribute; otherwise, return null
 		public static UserModel? GetUser(ApplicationDbContext context, string sessionId)
 		{
 			SessionModel? session = GetSession(context, sessionId);
@@ -92,6 +92,8 @@ namespace DigitalBankManagement
 			{
 				user = context.Users.First(u => u.Id == session.UserId);
 				user.Role = context.Roles.First(r => r.Id == user.RoleId);
+				session.LastUsed = DateTime.UtcNow;
+				context.SaveChanges();
 			}
 			return user;
 		}
