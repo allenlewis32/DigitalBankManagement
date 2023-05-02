@@ -4,6 +4,7 @@ using DigitalBankManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalBankManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230502060441_RdAccountModelAdded")]
+    partial class RdAccountModelAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,27 +128,6 @@ namespace DigitalBankManagement.Migrations
                     b.HasIndex("DebitFrom");
 
                     b.ToTable("Loans");
-                });
-
-            modelBuilder.Entity("DigitalBankManagement.Models.RdAccountModel", b =>
-                {
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DebitFrom")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("MonthlyDeposit")
-                        .HasColumnType("decimal(12, 2)");
-
-                    b.HasKey("AccountId");
-
-                    b.HasIndex("DebitFrom");
-
-                    b.ToTable("RdAccounts");
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.RoleModel", b =>
@@ -265,23 +247,6 @@ namespace DigitalBankManagement.Migrations
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.LoanModel", b =>
-                {
-                    b.HasOne("DigitalBankManagement.Models.AccountModel", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DigitalBankManagement.Models.AccountModel", "DebitAccount")
-                        .WithMany()
-                        .HasForeignKey("DebitFrom");
-
-                    b.Navigation("Account");
-
-                    b.Navigation("DebitAccount");
-                });
-
-            modelBuilder.Entity("DigitalBankManagement.Models.RdAccountModel", b =>
                 {
                     b.HasOne("DigitalBankManagement.Models.AccountModel", "Account")
                         .WithMany()
