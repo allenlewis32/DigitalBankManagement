@@ -46,6 +46,28 @@ namespace DigitalBankManagement.Controllers
 		}
 
 		[HttpPost]
+		[Route("Reject")]
+		public IActionResult Reject([FromHeader] string sessionId, [FromForm] int applicationId)
+		{
+			try
+			{
+				UserModel? user = Helper.GetUser(_context, sessionId);
+				if (user == null || user.Role.Name == "user")
+				{
+					return Unauthorized();
+				}
+				LoanApplicationModel application = _context.LoanApplications.First(la => la.Id == applicationId);
+				application.Status = -1;
+				_context.SaveChanges();
+				return Ok();
+			}
+			catch
+			{
+				return Problem();
+			}
+		}
+
+		[HttpPost]
 		[Route("Approve")]
 		public IActionResult Approve([FromHeader] string sessionId, [FromForm] int applicationId)
 		{
