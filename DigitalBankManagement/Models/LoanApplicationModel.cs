@@ -20,5 +20,11 @@ namespace DigitalBankManagement.Models
 		public AccountModel DebitAccount { get; set; }
 
 		public int Status { get; set; } // 0 - not yet reviewed; 1 - approved; -1 declined
+
+		public int? LoanId { get; set; }
+		[ForeignKey("LoanId")]
+		public AccountModel LoanAccount { get; set; }
+
+		public int Duration { get; set; }
 	}
 }
