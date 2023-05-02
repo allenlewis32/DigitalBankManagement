@@ -241,5 +241,44 @@ namespace DigitalBankManagement.Controllers
 				return Problem();
 			}
 		}
+
+		[HttpGet]
+		[Route("GetStatement")]
+		public IActionResult GetStatement([FromHeader] string sessionId, [FromForm] int accountId)
+		{
+			try
+			{
+				var user = Helper.GetUser(_context, sessionId);
+				if (user == null)
+				{
+					return Unauthorized();
+				}
+				var account = _context.Accounts.First(account => account.Id == accountId);
+				if (account.UserId != user.Id)
+				{
+					return Unauthorized();
+				}
+				var statement = _context.Transactions
+					.Where(transaction => transaction.FromAccountId == accountId || transaction.ToAccountId == accountId);
+				// remove account information
+				statement.ForEachAsync(transaction =>
+				{
+					if(transaction.FromAccount != null)
+					{
+						transaction.FromAccount = null;
+					}
+					if (transaction.ToAccount != null)
+					{
+						transaction.ToAccount = null;
+					}
+				})
+				.Wait();
+				return Ok(statement);
+			}
+			catch
+			{
+				return Problem();
+			}
+		}
 	}
 }
