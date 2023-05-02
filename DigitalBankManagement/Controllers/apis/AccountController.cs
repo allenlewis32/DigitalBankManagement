@@ -127,13 +127,13 @@ namespace DigitalBankManagement.Controllers
 				return Problem();
 			}
 		}
-		private IActionResult TransferMoney(int debitFrom, decimal amount, AccountModel creditToAccount)
+		private IActionResult TransferMoney(int debitFrom, decimal amount, AccountModel creditToAccount, bool deactivate = false)
 		{
 			var debitFromAccount = _context.Accounts
 				.First(account => account.Id == debitFrom);
 
-			// verify that the debit account is a savings account
-			if (debitFromAccount.Type != AccountModel.TypeSavings)
+			// to create a new account, verify that the debit account is a savings account
+			if (!deactivate && debitFromAccount.Type != AccountModel.TypeSavings)
 			{
 				return BadRequest("Money can be debited only from savings account");
 			}
@@ -145,14 +145,15 @@ namespace DigitalBankManagement.Controllers
 			}
 
 			debitFromAccount.Amount -= amount;
-			creditToAccount.Amount = amount; // don't need to add as it is a new account
+			creditToAccount.Amount += amount;
 
 			// store transaction
 			_context.Transactions.Add(new()
 			{
 				FromAccount = debitFromAccount,
 				ToAccount = creditToAccount,
-				Time = DateTime.UtcNow
+				Time = DateTime.UtcNow,
+				Amount = amount,
 			});
 			// Finally, save changes
 			_context.SaveChanges();
@@ -191,6 +192,48 @@ namespace DigitalBankManagement.Controllers
 
 				_context.LoanApplications.Add(loanApplication);
 				_context.SaveChanges();
+				return Ok();
+			}
+			catch
+			{
+				return Problem();
+			}
+		}
+
+		[HttpGet]
+		[Route("Deactivate")]
+		public IActionResult Deactivate([FromHeader] string sessionId, [FromForm] int accountId, [FromForm] int? transferTo)
+		{
+			try
+			{
+				var user = Helper.GetUser(_context, sessionId);
+				if (user == null)
+				{
+					return Unauthorized();
+				}
+				var account = _context.Accounts.First(account => account.Id == accountId);
+				if (account.UserId != user.Id)
+				{
+					return Unauthorized();
+				}
+				if (account.Type == AccountModel.TypeLoan)
+				{
+					return BadRequest("Can't close loan account");
+				}
+				bool transferMoney = false;
+				if (account.Amount != 0)
+				{
+					if (transferTo == null)
+					{
+						return BadRequest("Cannot close non-empty account. Transfer money to another account or extract it from the ATM");
+					}
+					transferMoney = true;
+				}
+				account.Active = false;
+				if (transferMoney)
+				{
+					return TransferMoney(accountId, account.Amount, _context.Accounts.First(account => account.Id == transferTo), true); // saveChanges will be called in TransferMoney
+				}
 				return Ok();
 			}
 			catch
