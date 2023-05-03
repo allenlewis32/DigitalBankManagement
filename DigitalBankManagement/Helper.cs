@@ -2,6 +2,7 @@
 using DigitalBankManagement.Data;
 using DigitalBankManagement.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalBankManagement
@@ -96,6 +97,51 @@ namespace DigitalBankManagement
 				context.SaveChanges();
 			}
 			return user;
+		}
+
+		public static IActionResult TransferMoney(ApplicationDbContext context, ControllerBase controller, AccountModel? debitFromAccount, decimal amount, AccountModel? creditToAccount, bool deactivate = false)
+		{
+			if (debitFromAccount == null && creditToAccount == null)
+			{
+				return controller.BadRequest();
+			}
+
+			if (debitFromAccount != null)
+			{
+				// for creating a new account, verify whether the debit account is a savings account
+				if (!deactivate && debitFromAccount.Type != AccountModel.TypeSavings)
+				{
+					return controller.BadRequest("Money can be debited only from savings account");
+				}
+
+				// verify balance
+				if (debitFromAccount.Amount < amount)
+				{
+					return controller.Conflict("Not enough amount");
+				}
+			}
+
+			if (debitFromAccount != null)
+			{
+				debitFromAccount.Amount -= amount;
+			}
+			if (creditToAccount != null)
+			{
+				creditToAccount.Amount += amount;
+			}
+
+			// store transaction
+			context.Transactions.Add(new()
+			{
+				FromAccount = debitFromAccount,
+				ToAccount = creditToAccount,
+				Time = DateTime.UtcNow,
+				Amount = amount,
+			});
+
+			// Finally, save changes
+			context.SaveChanges();
+			return controller.Ok();
 		}
 	}
 }
