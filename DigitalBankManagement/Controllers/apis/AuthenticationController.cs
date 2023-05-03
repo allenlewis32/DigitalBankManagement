@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace DigitalBankManagement.Controllers
+namespace DigitalBankManagement.Controllers.apis
 {
 	[Route("api/[controller]")]
 	[ApiController]

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DigitalBankManagement.Controllers
+namespace DigitalBankManagement.Controllers.apis
 {
 	[Route("api/[controller]")]
 	[ApiController]
