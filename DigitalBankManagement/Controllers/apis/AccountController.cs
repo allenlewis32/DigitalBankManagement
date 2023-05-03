@@ -95,7 +95,9 @@ namespace DigitalBankManagement.Controllers.apis
 						});
 
 						// perform transaction
-						return TransferMoney((int)createAccountModel.DebitFrom!, (decimal)createAccountModel.InitialDeposit!, newAccount);
+						var debitFromAccount = _context.Accounts
+							.First(acc => acc.Id == (int)createAccountModel.DebitFrom!);
+						return Helper.TransferMoney(_context, this, debitFromAccount, (decimal)createAccountModel.InitialDeposit!, newAccount);
 					case AccountModel.TypeRD:
 						// create RD account
 						_context.RdAccounts.Add(new()
@@ -115,7 +117,9 @@ namespace DigitalBankManagement.Controllers.apis
 						});
 
 						// perform transaction
-						return TransferMoney((int)createAccountModel.DebitFrom!, (decimal)createAccountModel.MonthlyDeposit!, newAccount);
+						debitFromAccount = _context.Accounts
+							.First(acc => acc.Id == (int)createAccountModel.DebitFrom!);
+						return Helper.TransferMoney(_context, this, debitFromAccount, (decimal)createAccountModel.MonthlyDeposit!, newAccount);
 					default: // cannot create loan or invalid type
 						return BadRequest();
 				}
@@ -126,38 +130,6 @@ namespace DigitalBankManagement.Controllers.apis
 			{
 				return Problem();
 			}
-		}
-		private IActionResult TransferMoney(int debitFrom, decimal amount, AccountModel creditToAccount, bool deactivate = false)
-		{
-			var debitFromAccount = _context.Accounts
-				.First(account => account.Id == debitFrom);
-
-			// to create a new account, verify that the debit account is a savings account
-			if (!deactivate && debitFromAccount.Type != AccountModel.TypeSavings)
-			{
-				return BadRequest("Money can be debited only from savings account");
-			}
-
-			// verify balance
-			if (debitFromAccount.Amount < amount)
-			{
-				return Conflict("Not enough amount");
-			}
-
-			debitFromAccount.Amount -= amount;
-			creditToAccount.Amount += amount;
-
-			// store transaction
-			_context.Transactions.Add(new()
-			{
-				FromAccount = debitFromAccount,
-				ToAccount = creditToAccount,
-				Time = DateTime.UtcNow,
-				Amount = amount,
-			});
-			// Finally, save changes
-			_context.SaveChanges();
-			return Ok();
 		}
 
 		[HttpPost]
@@ -221,9 +193,18 @@ namespace DigitalBankManagement.Controllers.apis
 					return BadRequest("Can't close loan account");
 				}
 				bool transferMoney = false;
+				AccountModel? transferToAccount = null;
+				if(transferTo != null)
+				{
+					transferToAccount = _context.Accounts.First(account => account.Id == transferTo);
+					if (transferToAccount.Type != AccountModel.TypeSavings)
+					{
+						return BadRequest("Money can be transfered only to a savings account");
+					}
+				}
 				if (account.Amount != 0)
 				{
-					if (transferTo == null)
+					if (transferToAccount == null)
 					{
 						return BadRequest("Cannot close non-empty account. Transfer money to another account or extract it from the ATM");
 					}
@@ -232,7 +213,7 @@ namespace DigitalBankManagement.Controllers.apis
 				account.Active = false;
 				if (transferMoney)
 				{
-					return TransferMoney(accountId, account.Amount, _context.Accounts.First(account => account.Id == transferTo), true); // saveChanges will be called in TransferMoney
+					return Helper.TransferMoney(_context, this, account, account.Amount, _context.Accounts.First(account => account.Id == transferTo), true); // saveChanges will be called in TransferMoney
 				}
 				return Ok();
 			}
