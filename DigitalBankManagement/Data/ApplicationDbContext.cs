@@ -17,5 +17,7 @@ namespace DigitalBankManagement.Data
 		public DbSet<LoanApplicationModel> LoanApplications { get; set; }
 		public DbSet<InterestModel> Interests { get; set; }
 		public DbSet<TransactionModel> Transactions { get; set; }
+
+		public DbSet<BeneficiaryModel> Beneficiaries { get; set; }
 	}
 }
