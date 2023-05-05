@@ -49,7 +49,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.BeneficiaryModel", b =>
@@ -76,7 +76,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Beneficiaries");
+                    b.ToTable("Beneficiaries", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.CardModel", b =>
@@ -97,7 +97,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Cards");
+                    b.ToTable("Cards", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.FdAccountModel", b =>
@@ -113,7 +113,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("FdAccounts");
+                    b.ToTable("FdAccounts", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.InterestModel", b =>
@@ -130,7 +130,7 @@ namespace DigitalBankManagement.Migrations
                     b.Property<decimal>("Savings")
                         .HasColumnType("decimal(5, 2)");
 
-                    b.ToTable("Interests");
+                    b.ToTable("Interests", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.LoanApplicationModel", b =>
@@ -167,7 +167,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LoanApplications");
+                    b.ToTable("LoanApplications", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.LoanModel", b =>
@@ -188,7 +188,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasIndex("DebitFrom");
 
-                    b.ToTable("Loans");
+                    b.ToTable("Loans", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.RdAccountModel", b =>
@@ -209,7 +209,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasIndex("DebitFrom");
 
-                    b.ToTable("RdAccounts");
+                    b.ToTable("RdAccounts", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.RoleModel", b =>
@@ -226,7 +226,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.SessionModel", b =>
@@ -244,7 +244,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.TransactionModel", b =>
@@ -273,7 +273,7 @@ namespace DigitalBankManagement.Migrations
 
                     b.HasIndex("ToAccountId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.UserModel", b =>
@@ -320,7 +320,7 @@ namespace DigitalBankManagement.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.AccountModel", b =>

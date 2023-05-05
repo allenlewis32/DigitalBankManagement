@@ -8,7 +8,7 @@ namespace DigitalBankManagement.Models
 		[Key]
 		public string SessionId { get; set; }
 		public int UserId { get; set; }
-		[ForeignKey("UserId")]
+		[ForeignKey(nameof(UserId))]
 		public UserModel User { get; set; }
 		public DateTime LastUsed { get; set; }
 	}

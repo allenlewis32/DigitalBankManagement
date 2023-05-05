@@ -2,6 +2,7 @@
 using DigitalBankManagement.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalBankManagement.Controllers.apis
 {
@@ -24,7 +25,21 @@ namespace DigitalBankManagement.Controllers.apis
 				{
 					return Unauthorized();
 				}
-				return Ok(_context.Beneficiaries.Where(b => b.UserId == user.Id));
+
+				var beneficiaries = new List<BeneficiaryModel>();
+				_context.Beneficiaries.Where(b => b.UserId == user.Id)
+					.ForEachAsync(beneficiary =>
+					{
+						beneficiaries.Add(new()
+						{
+							Id = beneficiary.Id,
+							UserId = beneficiary.UserId,
+							Name = beneficiary.Name,
+							BeneficiaryAccountId = beneficiary.BeneficiaryAccountId
+						});
+					})
+					.Wait();
+				return Ok(beneficiaries);
 			}
 			catch
 			{

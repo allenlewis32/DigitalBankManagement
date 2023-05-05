@@ -9,20 +9,20 @@ namespace DigitalBankManagement.Models
 		public int Id { get; set; }
 
 		public int UserId { get; set; }
-		[ForeignKey("UserId")]
+		[ForeignKey(nameof(UserId))]
 		public UserModel User { get; set; }
 
 		[Column(TypeName = "decimal(12, 2)")]
 		public decimal Amount { get; set; }
 
 		public int? DebitFrom { get; set; }
-		[ForeignKey("DebitFrom")]
+		[ForeignKey(nameof(DebitFrom))]
 		public AccountModel DebitAccount { get; set; }
 
 		public int Status { get; set; } // 0 - not yet reviewed; 1 - approved; -1 declined
 
 		public int? LoanId { get; set; }
-		[ForeignKey("LoanId")]
+		[ForeignKey(nameof(LoanId))]
 		public AccountModel LoanAccount { get; set; }
 
 		public int Duration { get; set; }

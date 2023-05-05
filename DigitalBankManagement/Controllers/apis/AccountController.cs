@@ -194,7 +194,7 @@ namespace DigitalBankManagement.Controllers.apis
 				}
 				bool transferMoney = false;
 				AccountModel? transferToAccount = null;
-				if(transferTo != null)
+				if (transferTo != null)
 				{
 					transferToAccount = _context.Accounts.First(account => account.Id == transferTo);
 					if (transferToAccount.Type != AccountModel.TypeSavings)
@@ -239,22 +239,23 @@ namespace DigitalBankManagement.Controllers.apis
 				{
 					return Unauthorized();
 				}
-				var statement = _context.Transactions
-					.Where(transaction => transaction.FromAccountId == accountId || transaction.ToAccountId == accountId);
-				// remove account information
-				statement.ForEachAsync(transaction =>
-				{
-					if(transaction.FromAccount != null)
+				var statements = new List<TransactionModel>();
+				_context.Transactions
+					.Where(transaction => transaction.FromAccountId == accountId || transaction.ToAccountId == accountId)
+					.ForEachAsync(transaction =>
 					{
-						transaction.FromAccount = null;
-					}
-					if (transaction.ToAccount != null)
-					{
-						transaction.ToAccount = null;
-					}
-				})
-				.Wait();
-				return Ok(statement);
+						// create new objects to prevent account information from leaking
+						statements.Add(new()
+						{
+							Id = transaction.Id,
+							FromAccountId = transaction.FromAccountId,
+							ToAccountId = transaction.ToAccountId,
+							Time = transaction.Time,
+							Amount = transaction.Amount
+						});
+					})
+					.Wait();
+				return Ok(statements);
 			}
 			catch
 			{

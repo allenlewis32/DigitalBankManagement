@@ -9,6 +9,7 @@ namespace DigitalBankManagement.Models
 		[Column(TypeName = "decimal(16)")]
 		public decimal Id { get; set; }
 		public int? AccountId { get; set; }
+		[ForeignKey(nameof(AccountId))]
 		public AccountModel? Account { get; set; }
 		public int Pin { get; set; }
 		public DateTime Expiry { get; set; }

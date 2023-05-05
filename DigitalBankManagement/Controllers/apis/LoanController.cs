@@ -33,12 +33,20 @@ namespace DigitalBankManagement.Controllers.apis
 					loans = loans.Where(loan => loan.Account.UserId == user.Id);
 				}
 
-				// don't send user information
+				var result = new List<LoanModel>();
+
 				loans.ForEachAsync(loan =>
 				{
-					loan.Account.User = null;
+					// create a new object to prevent sensitive information from leaking
+					result.Add(new()
+					{
+						AccountId = loan.AccountId,
+						Emi = loan.Emi,
+						Duration = loan.Duration,
+						DebitFrom = loan.DebitFrom
+					});
 				}).Wait();
-				return Ok(loans);
+				return Ok(result);
 			}
 			catch
 			{

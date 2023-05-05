@@ -7,7 +7,7 @@ namespace DigitalBankManagement.Models
 	{
 		[Key]
 		public int AccountId { get; set; }
-		[ForeignKey("AccountId")]
+		[ForeignKey(nameof(AccountId))]
 		public AccountModel Account { get; set; }
 
 		[Column(TypeName = "decimal(12, 2)")]

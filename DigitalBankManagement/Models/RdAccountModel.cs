@@ -8,7 +8,7 @@ namespace DigitalBankManagement.Models
 	{
 		[Key]
 		public int AccountId { get; set; }
-		[ForeignKey("AccountId")]
+		[ForeignKey(nameof(AccountId))]
 		public AccountModel Account { get; set; }
 
 		[Column(TypeName = "decimal(12, 2)")]
@@ -17,7 +17,7 @@ namespace DigitalBankManagement.Models
 		public int Duration { get; set; }
 
 		public int? DebitFrom { get; set; }
-		[ForeignKey("DebitFrom")]
+		[ForeignKey(nameof(DebitFrom))]
 		public AccountModel DebitAccount { get; set; }
 	}
 }

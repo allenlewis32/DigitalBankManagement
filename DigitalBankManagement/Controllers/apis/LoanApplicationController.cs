@@ -31,13 +31,22 @@ namespace DigitalBankManagement.Controllers.apis
 				if (user.Role.Name.ToLower() == "user")
 				{
 					applications = applications.Where(application => application.UserId == user.Id);
-					// don't send user information loaded while using where clause
-					applications.ForEachAsync(application =>
-					{
-						application.User = null;
-					}).Wait();
 				}
-				return Ok(applications);
+				var result = new List<LoanApplicationModel>();
+				applications.ForEachAsync(application =>
+				{
+					// create a new object to prevent sensitive information from leaking
+					result.Add(new()
+					{
+						Id = application.Id,
+						UserId = application.UserId,
+						Amount = application.Amount,
+						DebitFrom = application.DebitFrom,
+						Status = application.Status,
+						Duration = application.Duration
+					});
+				}).Wait();
+				return Ok(result);
 			}
 			catch
 			{
