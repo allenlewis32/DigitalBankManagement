@@ -23,7 +23,7 @@ namespace DigitalBankManagement.Controllers.apis
 
 		[HttpPost]
 		[Route("Register")]
-		public IActionResult Register([FromForm] RegisterModel registerModel)
+		public IActionResult Register(RegisterModel registerModel)
 		{
 			try
 			{
