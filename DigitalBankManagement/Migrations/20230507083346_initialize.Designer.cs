@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalBankManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230503071537_CardModelAdded2")]
-    partial class CardModelAdded2
+    [Migration("20230507083346_initialize")]
+    partial class initialize
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -213,6 +213,38 @@ namespace DigitalBankManagement.Migrations
                     b.HasIndex("DebitFrom");
 
                     b.ToTable("RdAccounts");
+                });
+
+            modelBuilder.Entity("DigitalBankManagement.Models.RegisterModel", b =>
+                {
+                    b.Property<string>("ConfirmPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("RegisterModel");
                 });
 
             modelBuilder.Entity("DigitalBankManagement.Models.RoleModel", b =>
