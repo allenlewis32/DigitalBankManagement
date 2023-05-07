@@ -157,7 +157,7 @@ namespace DigitalBankManagement
 		}
 
 		// GET method helper
-		public static dynamic? Get(Controller callingController, string controller, string action, string? sessionId, ITempDataDictionary tempData, object? model = null)
+		public static dynamic? Get(Controller callingController, string controller, string? action, string? sessionId, ITempDataDictionary tempData, object? model = null)
 		{
 			Task<dynamic?> res = PerformMethod("get", callingController, controller, action, sessionId, tempData, model);
 			res.Wait();
@@ -165,7 +165,7 @@ namespace DigitalBankManagement
 		}
 
 		// Performs the required HTTP method and returns the value
-		public static async Task<dynamic?> PerformMethod(string method, Controller callingController, string controller, string action, string? sessionId, ITempDataDictionary tempData, object? model = null)
+		public static async Task<dynamic?> PerformMethod(string method, Controller callingController, string controller, string? action, string? sessionId, ITempDataDictionary tempData, object? model = null)
 		{
 			using var client = new HttpClient();
 			string baseUrl = $"{callingController.Request.Scheme}://{callingController.Request.Host}{callingController.Request.PathBase}/api/{controller}/"; // get the base URL of this website

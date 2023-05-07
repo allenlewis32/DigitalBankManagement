@@ -33,13 +33,13 @@ namespace DigitalBankManagement.Controllers.apis
 				{
 					case "admin":
 						res["savings"] = _context.Accounts
-							.Count(account => account.Type == AccountModel.TypeSavings);
+							.Count(account => account.Type == AccountModel.TypeSavings && account.Active);
 						res["fd"] = _context.Accounts
-							.Count(account => account.Type == AccountModel.TypeFD);
+							.Count(account => account.Type == AccountModel.TypeFD && account.Active);
 						res["rd"] = _context.Accounts
-							.Count(account => account.Type == AccountModel.TypeRD);
+							.Count(account => account.Type == AccountModel.TypeRD && account.Active);
 						res["loan"] = _context.Accounts
-							.Count(account => account.Type == AccountModel.TypeLoan);
+							.Count(account => account.Type == AccountModel.TypeLoan && account.Active);
 						res["managers"] = _context.Users
 							.Count(user =>
 							user.RoleId == _context.Roles.First(role => role.Name == "manager").Id);
@@ -48,10 +48,10 @@ namespace DigitalBankManagement.Controllers.apis
 							user.RoleId == _context.Roles.First(role => role.Name == "user").Id);
 						break;
 					case "user":
-						res["savings"] = _context.Accounts.Where(account => account.Type == AccountModel.TypeSavings).ToList();
-						res["fd"] = _context.FdAccounts.Include(fd => fd.Account).ToList();
-						res["rd"] = _context.RdAccounts.Include(rd => rd.Account).ToList();
-						res["loan"] = _context.Loans.Include(loan => loan.Account).ToList();
+						res["savings"] = _context.Accounts.Where(account => account.Type == AccountModel.TypeSavings && account.Active).ToList();
+						res["fd"] = _context.FdAccounts.Include(fd => fd.Account).Where(acc => acc.Account.Active).ToList();
+						res["rd"] = _context.RdAccounts.Include(rd => rd.Account).Where(acc => acc.Account.Active).ToList();
+						res["loan"] = _context.Loans.Include(loan => loan.Account).Where(acc => acc.Account.Active).ToList();
 						break;
 				}
 				return Ok(res);

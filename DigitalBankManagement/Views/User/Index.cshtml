@@ -1,9 +1,144 @@
-﻿@{
+﻿@using Newtonsoft.Json.Linq;
+@{
 	ViewData["title"] = "Account Summary";
 }
 
 <h1 class="text-center">Account Summary</h1>
 
+@{
+	dynamic accounts = TempData["accounts"]!;
+}
+
 <h3>Savings accounts</h3>
 
-@TempData["savings"]
+@if (((JArray)accounts.savings).Count > 0)
+{
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Account Number</th>
+				<th>Balance</th>
+				<th>Date Created</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var account in (JArray)accounts.savings)
+			{
+				<tr>
+					<td>@account["id"]</td>
+					<td>₹ @account["amount"]</td>
+					<td>@account["dateCreated"]</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p class="lead">You don't have any active savings accounts</p>
+}
+<hr />
+
+<h3>FD accounts</h3>
+
+@if (((JArray)accounts.fd).Count > 0)
+{
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Account Number</th>
+				<th>Initial Deposit</th>
+				<th>Date Created</th>
+				<th>Number of months</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var account in (JArray)accounts.savings)
+			{
+				<tr>
+					<td>@account["account"]!.["id"]</td>
+					<td>₹ @account["account"]!.["amount"]</td>
+					<td>@account["account"]!.["dateCreated"]</td>
+					<td>@account["duration"]</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p class="lead">You don't have any active FD accounts</p>
+}
+<hr />
+
+<h3>RD accounts</h3>
+
+@if (((JArray)accounts.rd).Count > 0)
+{
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Account Number</th>
+				<th>Monthly Deposit</th>
+				<th>Balance</th>
+				<th>Date Created</th>
+				<th>Number of months</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var account in (JArray)accounts.savings)
+			{
+				<tr>
+					<td>@account["account"]!.["id"]</td>
+					<td>₹ @account["monthlyDeposit"]</td>
+					<td>₹ @account["account"]!.["amount"]</td>
+					<td>@account["account"]!.["dateCreated"]</td>
+					<td>@account["duration"]</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p class="lead">You don't have any active RD accounts</p>
+}
+<hr />
+
+<h3>Loan accounts</h3>
+
+@if (((JArray)accounts.fd).Count > 0)
+{
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Account Number</th>
+				<th>Initial Deposit</th>
+				<th>Balance</th>
+				<th>Date Created</th>
+				<th>Number of months</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var account in (JArray)accounts.savings)
+			{
+				<tr>
+					<td>@account["account"]!.["id"]</td>
+					<td>₹ @account["initialDeposit"]</td>
+					<td>₹ @account["account"]!.["amount"]</td>
+					<td>@account["account"]!.["dateCreated"]</td>
+					<td>@account["duration"]</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p class="lead">You don't have any active Loan accounts</p>
+}
+<hr />

@@ -10,7 +10,7 @@ namespace DigitalBankManagement.Controllers
 			try
 			{
 				dynamic? accounts = Helper.Get(this, "Account", null, Request.Cookies["sessionId"], TempData);
-				TempData["savings"] = accounts;
+				TempData["accounts"] = accounts;
 				return View();
 			} catch (Exception ex)
 			{
