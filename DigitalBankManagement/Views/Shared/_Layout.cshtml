@@ -22,25 +22,9 @@
 			</div>
 		</div>
 	</header>
-	@{
-		ViewData["Title"] = "Register";
-		string? errorMessage = (string?)ViewData["errorMessage"];
-		if (errorMessage != null)
-		{
-			<div id="errorMessage" class="alert alert-danger alert-dismissible">
-				@errorMessage
-				<button type="button" class="btn-close" onclick="document.getElementById('errorMessage').remove()"></button>
-			</div>
-		}
-		string? successMessage = (string?)ViewData["successMessage"];
-		if (successMessage != null)
-		{
-			<div id="errorMessage" class="alert alert-danger alert-dismissible">
-				@successMessage
-				<button type="button" class="btn-close" onclick="document.getElementById('successMessage').remove()"></button>
-			</div>
-		}
-	}
+	
+	<partial name="_MessagePartial" />
+
 	<main role="main" class="d-flex h-100 row m-0">
 		@RenderBody()
 	</main>

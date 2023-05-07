@@ -1,0 +1,19 @@
+﻿@{
+	ViewData["Title"] = "Register";
+	string? errorMessage = (string?)TempData["errorMessage"];
+	if (errorMessage != null)
+	{
+		<div id="errorMessage" class="alert alert-danger alert-dismissible">
+			@errorMessage
+			<button type="button" class="btn-close" onclick="document.getElementById('errorMessage').remove()"></button>
+		</div>
+	}
+	string? successMessage = (string?)TempData["successMessage"];
+	if (successMessage != null)
+	{
+		<div id="successMessage" class="alert alert-danger alert-dismissible">
+			@successMessage
+			<button type="button" class="btn-close" onclick="document.getElementById('successMessage').remove()"></button>
+		</div>
+	}
+}

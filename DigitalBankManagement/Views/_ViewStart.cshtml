@@ -1,5 +1,8 @@
-﻿@if(Context.Request.Cookies["sessionId"] == null) {
+﻿@if (Context.Request.Cookies["sessionId"] == null)
+{
 	Layout = "_Layout";
-} else {
+}
+else
+{
 	Layout = "_DashboardLayout";
 }

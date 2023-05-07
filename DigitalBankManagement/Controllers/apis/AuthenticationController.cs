@@ -28,7 +28,7 @@ namespace DigitalBankManagement.Controllers.apis
 			try
 			{
 				// authorize
-				switch(registerModel.Role.ToLower())
+				switch (registerModel.Role.ToLower())
 				{
 					case null:
 						return Problem("Role required");
@@ -36,15 +36,16 @@ namespace DigitalBankManagement.Controllers.apis
 						return Problem("Cannot create admin account");
 					case "manager": // manager can be created only by admin
 						bool authorized = false;
-						if(registerModel.SessionId != null)
+						if (registerModel.SessionId != null)
 						{
 							// verify session and user role
 							UserModel? callingUser = Helper.GetUser(_context, registerModel.SessionId);
-							if(callingUser != null && callingUser.Role.Name.ToLower() == "admin") {
+							if (callingUser != null && callingUser.Role.Name.ToLower() == "admin")
+							{
 								authorized = true;
 							}
 						}
-						if(!authorized)
+						if (!authorized)
 						{
 							return Unauthorized();
 						}
@@ -66,7 +67,7 @@ namespace DigitalBankManagement.Controllers.apis
 				user.PasswordHash = _passwordHasher.HashPassword(user, registerModel.Password);
 				_context.Users.Add(user);
 				_context.SaveChanges();
-				return Ok(GetSessionIdAndRole(_context, user));
+				return Ok(GetSessionIdNameAndRole(_context, user));
 			}
 			catch
 			{
@@ -74,36 +75,42 @@ namespace DigitalBankManagement.Controllers.apis
 			}
 		}
 
-		private static object GetSessionIdAndRole(ApplicationDbContext _context, UserModel user)
+		private static object GetSessionIdNameAndRole(ApplicationDbContext _context, UserModel user)
 		{
-			object sessionIdAndRole = new { sessionId = Helper.GenerateSessionId(_context, user), role = _context.Roles.First(r => r.Id == user.RoleId).Name };
-			return sessionIdAndRole;
+			object values = new
+			{
+				sessionId = Helper.GenerateSessionId(_context, user),
+				role = _context.Roles.First(r => r.Id == user.RoleId).Name,
+				firstName = user.FirstName,
+				lastName = user.LastName,
+			};
+			return values;
 		}
 
 		[HttpPost]
 		[Route("Login")]
-		public IActionResult Login([FromForm] LoginModel loginModel)
+		public IActionResult Login(LoginModel loginModel)
 		{
 			try
 			{
 				UserModel? user = _context.Users.FirstOrDefault(u => u.UserName == loginModel.UserName && u.Active);
-				if(user == null) // check whether user exists
+				if (user == null) // check whether user exists
 				{
 					return Unauthorized("User not found");
 				}
 				var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
-				if(result == PasswordVerificationResult.Failed) // check whether password is valid
+				if (result == PasswordVerificationResult.Failed) // check whether password is valid
 				{
 					return Unauthorized("Invalid password");
 				}
-				return Ok(GetSessionIdAndRole(_context, user));
+				return Ok(GetSessionIdNameAndRole(_context, user));
 			}
 			catch
 			{
 				return Problem("Unable to login");
 			}
 		}
-		
+
 		[HttpGet]
 		[Route("Logout")]
 		public IActionResult Logout([FromHeader] string sessionId)
@@ -111,7 +118,7 @@ namespace DigitalBankManagement.Controllers.apis
 			try
 			{
 				SessionModel? session = _context.Sessions.FirstOrDefault(s => s.SessionId == sessionId);
-				if(session == null)
+				if (session == null)
 				{
 					return Unauthorized("Invalid session id");
 				}
@@ -123,6 +130,17 @@ namespace DigitalBankManagement.Controllers.apis
 			{
 				return Problem("Unable to logout");
 			}
+		}
+
+		[HttpGet]
+		[Route("IsLoggedIn")]
+		public IActionResult IsLoggedIn([FromHeader] string sessionId)
+		{
+			if (Helper.GetSession(_context, sessionId) != null)
+			{
+				return Ok();
+			}
+			return Unauthorized();
 		}
 	}
 }

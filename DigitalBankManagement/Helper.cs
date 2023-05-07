@@ -1,9 +1,13 @@
-﻿using System.Security.Cryptography;
+﻿using System.Net;
+using System.Security.Cryptography;
+using Azure;
 using DigitalBankManagement.Data;
 using DigitalBankManagement.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DigitalBankManagement
 {
@@ -17,16 +21,16 @@ namespace DigitalBankManagement
 		public static string GenerateSessionId(ApplicationDbContext context, UserModel user)
 		{
 			DbSet<SessionModel> sessions = context.Sessions;
-			
+
 			// if a session for the user exists, return it
 			SessionModel? session = sessions.FirstOrDefault(s => s.UserId == user.Id);
-			if(session != null)
+			if (session != null)
 			{
 				session.LastUsed = DateTime.UtcNow;
 				context.SaveChanges();
 				return session.SessionId;
 			}
-			
+
 			byte[] bytes = new byte[len];
 			char[] tmp = new char[len];
 			while (true)
@@ -142,6 +146,65 @@ namespace DigitalBankManagement
 			// Finally, save changes
 			context.SaveChanges();
 			return controller.Ok();
+		}
+
+		// POST method helper
+		public static dynamic? Post(Controller callingController, string controller, string action, string? sessionId, ITempDataDictionary tempData, object? model = null)
+		{
+			Task<dynamic?> res = PerformMethod("post", callingController, controller, action, sessionId, tempData, model);
+			res.Wait();
+			return res.Result;
+		}
+
+		// GET method helper
+		public static dynamic? Get(Controller callingController, string controller, string action, string? sessionId, ITempDataDictionary tempData, object? model = null)
+		{
+			Task<dynamic?> res = PerformMethod("get", callingController, controller, action, sessionId, tempData, model);
+			res.Wait();
+			return res.Result;
+		}
+
+		// Performs the required HTTP method and returns the value
+		public static async Task<dynamic?> PerformMethod(string method, Controller callingController, string controller, string action, string? sessionId, ITempDataDictionary tempData, object? model = null)
+		{
+			using var client = new HttpClient();
+			string baseUrl = $"{callingController.Request.Scheme}://{callingController.Request.Host}{callingController.Request.PathBase}/api/{controller}/"; // get the base URL of this website
+			client.BaseAddress = new Uri(baseUrl);
+			client.DefaultRequestHeaders.Add("sessionId", sessionId);
+			HttpResponseMessage? result = null;
+			switch (method)
+			{
+				case "post":
+					{
+						var responseTask = client.PostAsJsonAsync(action, model);
+						await responseTask;
+						result = responseTask.Result;
+						break;
+					}
+				case "get":
+					{
+						var responseTask = client.GetAsync(action);
+						await responseTask;
+						result = responseTask.Result;
+						break;
+					}
+			}
+
+			if (result!.IsSuccessStatusCode)
+			{
+				var content = await result.Content.ReadAsStringAsync();
+				dynamic json = JsonConvert.DeserializeObject(content)!;
+				return json;
+			}
+			else if (result.StatusCode == HttpStatusCode.Unauthorized || sessionId == null) // if unauthorized, throw Exception to be caught by the controller
+			{
+				throw new Exception("Unauthorized");
+			}
+			else
+			{
+				tempData["errorMessage"] = await result.Content.ReadAsStringAsync();
+			}
+			return null;
 		}
 	}
 }
