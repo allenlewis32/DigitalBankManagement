@@ -82,7 +82,7 @@ namespace DigitalBankManagement.Controllers.apis
 
 		[HttpPost]
 		[Route("Login")]
-		public IActionResult Login([FromForm] LoginModel loginModel)
+		public IActionResult Login(LoginModel loginModel)
 		{
 			try
 			{

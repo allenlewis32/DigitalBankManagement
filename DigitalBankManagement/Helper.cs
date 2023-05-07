@@ -1,9 +1,12 @@
 ﻿using System.Security.Cryptography;
+using Azure;
 using DigitalBankManagement.Data;
 using DigitalBankManagement.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DigitalBankManagement
 {
@@ -142,6 +145,30 @@ namespace DigitalBankManagement
 			// Finally, save changes
 			context.SaveChanges();
 			return controller.Ok();
+		}
+
+		// POST method helper
+		public static async Task<dynamic?> PostAsync(Controller callingController, string controller, string action, string? sessionId, ViewDataDictionary viewData, object? model = null)
+		{
+			using var client = new HttpClient();
+			string baseUrl = $"{callingController.Request.Scheme}://{callingController.Request.Host}{callingController.Request.PathBase}/api/{controller}/"; // get the base URL of this website
+			client.BaseAddress = new Uri(baseUrl);
+			client.DefaultRequestHeaders.Add("sessionId", sessionId);
+			var responseTask = client.PostAsJsonAsync(action, model);
+			responseTask.Wait();
+
+			var result = responseTask.Result;
+			if (result.IsSuccessStatusCode)
+			{
+				var content = await result.Content.ReadAsStringAsync();
+				dynamic json = JsonConvert.DeserializeObject(content)!;
+				return json;
+			}
+			else
+			{
+				viewData["errorMessage"] = await result.Content.ReadAsStringAsync();
+			}
+			return null;
 		}
 	}
 }
