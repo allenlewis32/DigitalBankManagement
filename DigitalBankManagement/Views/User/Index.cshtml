@@ -6,14 +6,14 @@
 <h1 class="text-center">Account Summary</h1>
 
 @{
-	dynamic accounts = TempData["accounts"]!;
+	dynamic accounts = ViewData["accounts"]!;
 }
 
 <h3>Savings accounts</h3>
 
 @if (((JArray)accounts.savings).Count > 0)
 {
-
+	decimal balance = 0;
 	<table class="table">
 		<thead>
 			<tr>
@@ -30,38 +30,41 @@
 					<td>₹ @account["amount"]</td>
 					<td>@account["dateCreated"]</td>
 				</tr>
+				balance += (decimal)account["amount"]!;
 			}
 		</tbody>
 	</table>
+	<p class="lead">Total balance: ₹ @balance</p>
 }
 else
 {
 	<p class="lead">You don't have any active savings accounts</p>
+	<hr />
 }
-<hr />
 
 <h3>FD accounts</h3>
 
 @if (((JArray)accounts.fd).Count > 0)
 {
-
 	<table class="table">
 		<thead>
 			<tr>
 				<th>Account Number</th>
 				<th>Initial Deposit</th>
+				<th>Amount</th>
+				<th>Duration</th>
 				<th>Date Created</th>
-				<th>Number of months</th>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var account in (JArray)accounts.savings)
+			@foreach (var account in (JArray)accounts.fd)
 			{
 				<tr>
-					<td>@account["account"]!.["id"]</td>
-					<td>₹ @account["account"]!.["amount"]</td>
-					<td>@account["account"]!.["dateCreated"]</td>
+					<td>@(account["account"]!["id"])</td>
+					<td>₹ @account["initialDeposit"]</td>
+					<td>₹ @(account["account"]!["amount"])</td>
 					<td>@account["duration"]</td>
+					<td>@(account["account"]!["dateCreated"])</td>
 				</tr>
 			}
 		</tbody>
@@ -70,33 +73,32 @@ else
 else
 {
 	<p class="lead">You don't have any active FD accounts</p>
+	<hr />
 }
-<hr />
 
 <h3>RD accounts</h3>
 
 @if (((JArray)accounts.rd).Count > 0)
 {
-
 	<table class="table">
 		<thead>
 			<tr>
 				<th>Account Number</th>
 				<th>Monthly Deposit</th>
-				<th>Balance</th>
+				<th>Amount</th>
+				<th>Duration</th>
 				<th>Date Created</th>
-				<th>Number of months</th>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var account in (JArray)accounts.savings)
+			@foreach (var account in (JArray)accounts.rd)
 			{
 				<tr>
-					<td>@account["account"]!.["id"]</td>
+					<td>@(account["account"]!["id"])</td>
 					<td>₹ @account["monthlyDeposit"]</td>
-					<td>₹ @account["account"]!.["amount"]</td>
-					<td>@account["account"]!.["dateCreated"]</td>
+					<td>₹ @(account["account"]!["amount"])</td>
 					<td>@account["duration"]</td>
+					<td>@(account["account"]!["dateCreated"])</td>
 				</tr>
 			}
 		</tbody>
@@ -105,33 +107,32 @@ else
 else
 {
 	<p class="lead">You don't have any active RD accounts</p>
+	<hr />
 }
-<hr />
 
 <h3>Loan accounts</h3>
 
-@if (((JArray)accounts.fd).Count > 0)
+@if (((JArray)accounts.loan).Count > 0)
 {
-
 	<table class="table">
 		<thead>
 			<tr>
 				<th>Account Number</th>
-				<th>Initial Deposit</th>
+				<th>EMI</th>
 				<th>Balance</th>
+				<th>Duration</th>
 				<th>Date Created</th>
-				<th>Number of months</th>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var account in (JArray)accounts.savings)
+			@foreach (var account in (JArray)accounts.loan)
 			{
 				<tr>
-					<td>@account["account"]!.["id"]</td>
-					<td>₹ @account["initialDeposit"]</td>
-					<td>₹ @account["account"]!.["amount"]</td>
-					<td>@account["account"]!.["dateCreated"]</td>
+					<td>@(account["account"]!["id"])</td>
+					<td>₹ @account["emi"]</td>
+					<td>₹ @(account["account"]!["amount"])</td>
 					<td>@account["duration"]</td>
+					<td>@(account["account"]!["dateCreated"])</td>
 				</tr>
 			}
 		</tbody>
@@ -140,5 +141,5 @@ else
 else
 {
 	<p class="lead">You don't have any active Loan accounts</p>
+	<hr />
 }
-<hr />

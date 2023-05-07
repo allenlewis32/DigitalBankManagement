@@ -14,7 +14,7 @@ namespace DigitalBankManagement.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Login(LoginModel model)
+		public IActionResult Login(LoginModel model)
 		{
 			if (ModelState.IsValid)
 			{

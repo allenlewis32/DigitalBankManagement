@@ -65,7 +65,7 @@ namespace DigitalBankManagement.Controllers.apis
 		// Creates a savings, fd or rd account. To create a loan account, use the ApplyLoan method
 		[HttpPost]
 		[Route("CreateAccount")]
-		public IActionResult CreateAccount([FromHeader] string sessionId, [FromForm] CreateAccountModel createAccountModel)
+		public IActionResult CreateAccount([FromHeader] string sessionId, CreateAccountModel createAccountModel)
 		{
 			try
 			{
@@ -135,7 +135,7 @@ namespace DigitalBankManagement.Controllers.apis
 
 		[HttpPost]
 		[Route("ApplyLoan")]
-		public IActionResult ApplyLoan([FromHeader] string sessionId, [FromForm] decimal amount, [FromForm] int duration, [FromForm] int debitFrom)
+		public IActionResult ApplyLoan([FromHeader] string sessionId, decimal amount, int duration, int debitFrom)
 		{
 			try
 			{
@@ -175,7 +175,7 @@ namespace DigitalBankManagement.Controllers.apis
 
 		[HttpGet]
 		[Route("Deactivate")]
-		public IActionResult Deactivate([FromHeader] string sessionId, [FromForm] int accountId, [FromForm] int? transferTo)
+		public IActionResult Deactivate([FromHeader] string sessionId, int accountId, int? transferTo)
 		{
 			try
 			{
@@ -226,7 +226,7 @@ namespace DigitalBankManagement.Controllers.apis
 
 		[HttpGet]
 		[Route("GetStatement")]
-		public IActionResult GetStatement([FromHeader] string sessionId, [FromForm] int accountId)
+		public IActionResult GetStatement([FromHeader] string sessionId, int accountId)
 		{
 			try
 			{

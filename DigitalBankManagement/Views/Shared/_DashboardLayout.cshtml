@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Newtonsoft.Json.Linq;
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -18,8 +19,6 @@
 			<a class="btn btn-warning me-2" asp-route="Logout">Sign out</a>
 		</div>
 	</header>
-
-	<partial name="_MessagePartial" />
 
 	<div class="container-fluid">
 		<div class="row">
@@ -61,15 +60,83 @@
 	</div>
 
 	<main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-3">
+		<partial name="_MessagePartial" />
 		@RenderBody()
 	</main>
+
+	@*Modal for create account*@
+	<div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<form class="modal-content" asp-route="CreateAccount">
+				<div class="modal-header">
+					<h5 class="modal-title" id="createAccountModalLabel">Fill details</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<select name="type" id="type" class="form-select">
+						<option value="0" selected>Savings</option>
+						<option value="1">FD</option>
+						<option value="2">RD</option>
+					</select>
+					<div id="initialDeposit" class="form-floating mt-3">
+						<input type="number" min="1" name="initialDeposit" class="form-control" placeholder="Initial Deposit" />
+						<label class="control-label">Initial Deposit</label>
+					</div>
+					<div id="monthlyDeposit" class="form-floating mt-3">
+						<input type="number" min="1" name="monthlyDeposit" class="form-control" placeholder="Monthly Deposit" />
+						<label class="control-label">Monthly Deposit</label>
+					</div>
+					<div id="duration" class="form-floating mt-3">
+						<input type="number" min="1" name="duration" class="form-control" placeholder="Duration (years)" />
+						<label class="control-label">Duration (years)</label>
+					</div>
+					<div id="debitFrom" class="form-floating mt-3">
+						<select name="debitFrom" class="form-select">
+							@foreach (var account in (JArray)((dynamic)ViewData["accounts"]!).savings)
+							{
+								var id = account["id"];
+								<option value="@id">@id</option>
+							}
+						</select>
+						<label class="form-label">Account ID to debit money from</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Create</button>
+				</div>
+			</form>
+		</div>
+	</div>
 
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
 	<script>
-		feather.replace({ 'aria-hidden': 'true' })
+		feather.replace({ 'aria-hidden': 'true' });
+
+		// update fields according to selected account type
+		$("#type").change(function () {
+			if (this.value == "0") { // savings
+				$("#initialDeposit").hide();
+				$("#monthlyDeposit").hide();
+				$("#duration").hide();
+				$("#debitFrom").hide();
+			} else if (this.value == "1") { // fd
+				$("#initialDeposit").show();
+				$("#monthlyDeposit").hide();
+				$("#duration").show();
+				$("#debitFrom").show();
+			} else if (this.value == "2") { // rd
+				$("#initialDeposit").hide();
+				$("#monthlyDeposit").show();
+				$("#duration").show();
+				$("#debitFrom").show();
+			}
+		});
+
+		$("#type").change(); // manually trigger change method for initial value
 	</script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>

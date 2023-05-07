@@ -10,11 +10,11 @@ namespace DigitalBankManagement.Controllers
 			try
 			{
 				dynamic? accounts = Helper.Get(this, "Account", null, Request.Cookies["sessionId"], TempData);
-				TempData["accounts"] = accounts;
+				ViewData["accounts"] = accounts; // use ViewData so that it can be accessed later by CreateAccountModal
 				return View();
-			} catch (Exception ex)
+			}
+			catch // unauthorized
 			{
-				TempData["errorMessage"] = ex.Message;
 				return RedirectToRoute("Login");
 			}
 		}
