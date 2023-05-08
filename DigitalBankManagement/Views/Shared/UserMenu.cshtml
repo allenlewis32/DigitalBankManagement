@@ -2,7 +2,6 @@
 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
 	<span>Accounts</span>
 	<a class="link-secondary">
-		<span data-feather="plus-circle"></span>
 	</a>
 </h6>
 <ul class="nav flex-column mb-2">
@@ -18,6 +17,21 @@
 		<a href="#" class="nav-link" aria-current="page" data-bs-toggle="modal" data-bs-target="#viewStatementModel">
 			<span data-feather="file-text"></span>
 			View Statement
+		</a>
+	</li>
+</ul>
+
+@*Beneficiary menu*@
+<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+	<span>Beneficiaries</span>
+	<a class="link-secondary">
+	</a>
+</h6>
+<ul class="nav flex-column mb-2">
+	<li class="nav-item">
+		<a class="nav-link" aria-current="page" asp-route="BeneficiaryIndex">
+			<span data-feather="users"></span>
+			View beneficiaries
 		</a>
 	</li>
 </ul>

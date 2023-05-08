@@ -1,0 +1,39 @@
+﻿@using Newtonsoft.Json.Linq;
+@{
+	ViewData["title"] = "Beneficiaries";
+}
+
+<h1 class="text-center">Beneficiaries</h1>
+
+@{
+	dynamic beneficiaries = ViewData["beneficiaries"]!;
+}
+
+@if (((JArray)beneficiaries).Count > 0)
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Account ID</th>
+				<th></th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var beneficiary in (JArray)beneficiaries)
+			{
+				<tr>
+					<td>@beneficiary["name"]</td>
+					<td>@beneficiary["beneficiaryAccountId"]</td>
+					<td><a class="btn btn-primary" asp-route="BeneficiaryEdit" asp-route-id=@beneficiary["id"]>Edit</a></td>
+					<td><a class="btn btn-danger" asp-route="BeneficiaryDeactivate" asp-route-id=@beneficiary["id"]>Deactivate</a></td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p class="lead">You don't have any beneficiaries accounts</p>
+}
