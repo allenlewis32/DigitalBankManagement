@@ -1,0 +1,39 @@
+﻿@using Newtonsoft.Json.Linq;
+@{
+	ViewData["title"] = "Loan Applications";
+}
+
+<h1 class="text-center">Loan Applications</h1>
+
+@{
+	dynamic applications = ViewData["applications"]!;
+}
+
+@if (((List<dynamic>)applications).Count > 0)
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Amount</th>
+				<th>Debit From</th>
+				<th>Duration</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var beneficiary in (List<dynamic>)applications)
+			{
+				<tr>
+					<td>@(beneficiary.amount)</td>
+					<td>@(beneficiary.debitFrom)</td>
+					<td>@(beneficiary.duration)</td>
+					<td class="@(beneficiary.statusTextClass)">@(beneficiary.status)</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p class="lead">You haven't applied for any loans yet</p>
+}
