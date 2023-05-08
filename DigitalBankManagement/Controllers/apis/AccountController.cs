@@ -129,9 +129,16 @@ namespace DigitalBankManagement.Controllers.apis
 			}
 		}
 
+		public class ApplyLoanModel
+		{
+			public decimal Amount { get; set; }
+			public int Duration { get; set; }
+			public int DebitFrom { get; set; }
+		}
+
 		[HttpPost]
 		[Route("ApplyLoan")]
-		public IActionResult ApplyLoan([FromHeader] string sessionId, decimal amount, int duration, int debitFrom)
+		public IActionResult ApplyLoan([FromHeader] string sessionId, ApplyLoanModel model)
 		{
 			try
 			{
@@ -142,7 +149,7 @@ namespace DigitalBankManagement.Controllers.apis
 				}
 
 				var debitFromAccount = _context.Accounts
-					.First(account => account.Id == debitFrom);
+					.First(account => account.Id == model.DebitFrom);
 
 				// verify that the debit account is a savings account
 				if (debitFromAccount.Type != AccountModel.TypeSavings)
@@ -152,9 +159,9 @@ namespace DigitalBankManagement.Controllers.apis
 
 				var loanApplication = new LoanApplicationModel()
 				{
-					Amount = amount,
-					DebitFrom = debitFrom,
-					Duration = duration,
+					Amount = model.Amount,
+					DebitFrom = model.DebitFrom,
+					Duration = model.Duration,
 					Status = 0,
 					User = user
 				};

@@ -47,5 +47,26 @@ namespace DigitalBankManagement.Controllers
 				return RedirectToRoute("Login");
 			}
 		}
+
+		[HttpPost]
+		[Route("/LoanApplication/Apply", Name = "LoanApply")]
+		public IActionResult LoanApply(string debitFrom, string amount, string duration)
+		{
+			try
+			{
+				var parameters = new
+				{
+					debitFrom,
+					amount,
+					duration
+				};
+				dynamic? res = Helper.Post(this, "Account", "ApplyLoan", Request.Cookies["sessionId"], TempData, parameters);
+				return RedirectToRoute("LoanApplicationIndex");
+			}
+			catch // unauthorized
+			{
+				return RedirectToRoute("Login");
+			}
+		}
 	}
 }

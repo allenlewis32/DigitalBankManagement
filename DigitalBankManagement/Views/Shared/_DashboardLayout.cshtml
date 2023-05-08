@@ -169,8 +169,41 @@
 							<label class="form-label">Account ID to debit money from</label>
 						</div>
 						<div class="form-floating mt-3">
-							<input class="form-control" name="amount" placeholder="Amount" required />
+							<input type="number" min="1" class="form-control" name="amount" placeholder="Amount" required />
 							<label class="form-label" for="amount">Amount</label>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Send</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	@*Modal for ApplyLoan*@
+	<div class="modal fade" id="applyLoanModel" tabindex="-1" aria-labelledby="applyLoanModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<form class="modal-content" asp-route="LoanApply">
+				<div class="modal-header">
+					<h5 class="modal-title" id="applyLoanLabel">Enter Details</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div id="accountId" class="form-floating mt-3">
+						<div id="debitFrom" class="form-floating mt-3">
+							<select name="debitFrom" class="form-select">
+							</select>
+							<label class="form-label">Account ID to debit money from</label>
+						</div>
+						<div class="form-floating mt-3">
+							<input type="number" min="1" class="form-control" name="amount" placeholder="Amount" required />
+							<label class="form-label" for="amount">Amount</label>
+						</div>
+						<div class="form-floating mt-3">
+							<input type="number" min="1" class="form-control" name="duration" placeholder="Duration" required />
+							<label class="form-label" for="duration">Duration</label>
 						</div>
 					</div>
 				</div>
