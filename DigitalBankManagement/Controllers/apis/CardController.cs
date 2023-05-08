@@ -1,5 +1,6 @@
 ﻿using DigitalBankManagement.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalBankManagement.Controllers.apis
 {
@@ -14,7 +15,7 @@ namespace DigitalBankManagement.Controllers.apis
 		}
 
 		[HttpGet]
-		public IActionResult Get([FromHeader] string sessionId, [FromForm] int accountId)
+		public IActionResult Get([FromHeader] string sessionId)
 		{
 			try
 			{
@@ -24,17 +25,8 @@ namespace DigitalBankManagement.Controllers.apis
 					return Unauthorized();
 				}
 
-				var account = _context.Accounts.FirstOrDefault(acc => acc.Id == accountId);
-				if (account == null)
-				{
-					return BadRequest();
-				}
-				if (account.UserId != user.Id)
-				{
-					return Unauthorized();
-				}
-
-				var cards = _context.Cards.Where(card => card.AccountId == accountId);
+				var cards = _context.Cards.Include(card => card.Account)
+					.Where(card => card.Account!.UserId == user.Id && card.Expiry > DateTime.UtcNow);
 				return Ok(cards);
 			}
 			catch
@@ -43,8 +35,14 @@ namespace DigitalBankManagement.Controllers.apis
 			}
 		}
 
+		public class CardAddModel
+		{
+			public int AccountId { get; set; }
+			public int Pin { get; set; }
+		}
+
 		[HttpPost]
-		public IActionResult Post([FromHeader] string sessionId, [FromForm] int accountId, [FromForm] int pin)
+		public IActionResult Post([FromHeader] string sessionId, CardAddModel model)
 		{
 			try
 			{
@@ -54,7 +52,7 @@ namespace DigitalBankManagement.Controllers.apis
 					return Unauthorized();
 				}
 
-				var account = _context.Accounts.FirstOrDefault(acc => acc.Id == accountId);
+				var account = _context.Accounts.FirstOrDefault(acc => acc.Id == model.AccountId);
 				if (account == null)
 				{
 					return BadRequest();
@@ -68,15 +66,16 @@ namespace DigitalBankManagement.Controllers.apis
 				if (_context.Cards.Any())
 				{
 					cardNumber = _context.Cards.Max(card => card.Id) + 1;
-				} else
+				}
+				else
 				{
-					cardNumber = 4000000000000000;
+					cardNumber = 4000000000000000; // initial card number
 				}
 				_context.Cards.Add(new()
 				{
-					AccountId = accountId,
+					AccountId = model.AccountId,
 					Expiry = DateTime.UtcNow.AddYears(5),
-					Pin = pin,
+					Pin = model.Pin,
 					Id = cardNumber,
 				});
 				_context.SaveChanges();
@@ -90,7 +89,7 @@ namespace DigitalBankManagement.Controllers.apis
 		}
 
 		[HttpDelete]
-		public IActionResult Delete([FromHeader] string sessionId, [FromForm] string cardNumber)
+		public IActionResult Delete([FromHeader] string sessionId, string cardNumber)
 		{
 			try
 			{

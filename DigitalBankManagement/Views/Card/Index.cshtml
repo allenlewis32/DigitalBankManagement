@@ -1,0 +1,39 @@
+﻿@using Newtonsoft.Json.Linq;
+@{
+	ViewData["title"] = "Cards";
+}
+
+<h1 class="text-center">Cards</h1>
+
+@{
+	dynamic cards = ViewData["cards"]!;
+}
+
+@if (((JArray)cards).Count > 0)
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Card Number</th>
+				<th>Account ID</th>
+				<th>Expiry</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var card in (JArray)cards)
+			{
+				<tr>
+					<td>@card["id"]</td>
+					<td>@card["accountId"]</td>
+					<td>@card["expiry"]</td>
+					<td><a class="btn btn-danger" asp-route="CardDelete" asp-route-id=@card["id"]>Delete</a></td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p class="lead">You don't have any cards</p>
+}
