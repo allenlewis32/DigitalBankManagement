@@ -54,7 +54,7 @@ namespace DigitalBankManagement.Controllers
 			switch ((string)json.role)
 			{
 				case "admin":
-					controller = "Admin";
+					controller = "LoanApplication";
 					break;
 				case "manager":
 					controller = "Manager";
@@ -115,7 +115,7 @@ namespace DigitalBankManagement.Controllers
 					switch ((string) json.role)
 					{
 						case "admin":
-							controller = "Admin";
+							controller = "LoanApplication";
 							break;
 						case "manager":
 							controller = "Manager";

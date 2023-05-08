@@ -54,9 +54,14 @@ namespace DigitalBankManagement.Controllers.apis
 			}
 		}
 
+		public class Model
+		{
+			public int ApplicationId { get; set;}
+		}
+
 		[HttpPost]
 		[Route("Reject")]
-		public IActionResult Reject([FromHeader] string sessionId, [FromForm] int applicationId)
+		public IActionResult Reject([FromHeader] string sessionId, Model model)
 		{
 			try
 			{
@@ -65,7 +70,7 @@ namespace DigitalBankManagement.Controllers.apis
 				{
 					return Unauthorized();
 				}
-				LoanApplicationModel application = _context.LoanApplications.First(la => la.Id == applicationId);
+				LoanApplicationModel application = _context.LoanApplications.First(la => la.Id == model.ApplicationId);
 				application.Status = -1;
 				_context.SaveChanges();
 				return Ok();
@@ -78,7 +83,7 @@ namespace DigitalBankManagement.Controllers.apis
 
 		[HttpPost]
 		[Route("Approve")]
-		public IActionResult Approve([FromHeader] string sessionId, [FromForm] int applicationId)
+		public IActionResult Approve([FromHeader] string sessionId, Model model)
 		{
 			try
 			{
@@ -87,7 +92,7 @@ namespace DigitalBankManagement.Controllers.apis
 				{
 					return Unauthorized();
 				}
-				LoanApplicationModel application = _context.LoanApplications.First(la => la.Id == applicationId);
+				LoanApplicationModel application = _context.LoanApplications.First(la => la.Id == model.ApplicationId);
 				application.Status = 1;
 				AccountModel account = new()
 				{
@@ -108,9 +113,9 @@ namespace DigitalBankManagement.Controllers.apis
 				_context.SaveChanges();
 				return Ok();
 			}
-			catch
+			catch(Exception ex)
 			{
-				return Problem();
+				return Problem(ex.Message);
 			}
 		}
 

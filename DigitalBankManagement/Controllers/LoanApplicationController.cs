@@ -25,7 +25,7 @@ namespace DigitalBankManagement.Controllers
 							status = "Approved";
 							statusTextClass = "text-success";
 							break;
-						case 2:
+						case -1:
 							status = "Declined";
 							statusTextClass = "text-danger";
 							break;
@@ -36,7 +36,8 @@ namespace DigitalBankManagement.Controllers
 						debitFrom = item["debitFrom"],
 						duration = item["duration"],
 						status,
-						statusTextClass
+						statusTextClass,
+						Id = item["id"]
 					});
 				}
 				ViewData["applications"] = applications;
@@ -61,6 +62,42 @@ namespace DigitalBankManagement.Controllers
 					duration
 				};
 				dynamic? res = Helper.Post(this, "Account", "ApplyLoan", Request.Cookies["sessionId"], TempData, parameters);
+				return RedirectToRoute("LoanApplicationIndex");
+			}
+			catch // unauthorized
+			{
+				return RedirectToRoute("Login");
+			}
+		}
+
+		[Route("/LoanApplication/Approve", Name = "LoanApprove")]
+		public IActionResult LoanApprove(string id)
+		{
+			try
+			{
+				var parameters = new
+				{
+					applicationId = id,
+				};
+				dynamic? res = Helper.Post(this, "LoanApplication", "Approve", Request.Cookies["sessionId"], TempData, parameters);
+				return RedirectToRoute("LoanApplicationIndex");
+			}
+			catch // unauthorized
+			{
+				return RedirectToRoute("Login");
+			}
+		}
+
+		[Route("/LoanApplication/Reject", Name = "LoanReject")]
+		public IActionResult LoanReject(string id)
+		{
+			try
+			{
+				var parameters = new
+				{
+					applicationId = id,
+				};
+				dynamic? res = Helper.Post(this, "LoanApplication", "Reject", Request.Cookies["sessionId"], TempData, parameters);
 				return RedirectToRoute("LoanApplicationIndex");
 			}
 			catch // unauthorized

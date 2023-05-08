@@ -7,6 +7,7 @@
 
 @{
 	dynamic applications = ViewData["applications"]!;
+	var isAdmin = Context.Request.Cookies["role"] == "admin";
 }
 
 @if (((List<dynamic>)applications).Count > 0)
@@ -18,16 +19,26 @@
 				<th>Debit From</th>
 				<th>Duration</th>
 				<th>Status</th>
+				@if (isAdmin)
+				{
+					<th></th>
+					<th></th>
+				}
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var beneficiary in (List<dynamic>)applications)
+			@foreach (var application in (List<dynamic>)applications)
 			{
 				<tr>
-					<td>@(beneficiary.amount)</td>
-					<td>@(beneficiary.debitFrom)</td>
-					<td>@(beneficiary.duration)</td>
-					<td class="@(beneficiary.statusTextClass)">@(beneficiary.status)</td>
+					<td>@(application.amount)</td>
+					<td>@(application.debitFrom)</td>
+					<td>@(application.duration)</td>
+					<td class="@(application.statusTextClass)">@(application.status)</td>
+					@if (isAdmin && application.status == "Pending")
+					{
+						<td><a class="btn btn-primary" asp-route="LoanApprove" asp-route-id="@application.Id">Approve</a></td>
+						<td><a class="btn btn-primary" asp-route="LoanReject" asp-route-id="@application.Id">Reject</a></td>
+					}
 				</tr>
 			}
 		</tbody>
