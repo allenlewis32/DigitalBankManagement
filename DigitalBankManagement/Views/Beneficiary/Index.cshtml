@@ -17,7 +17,6 @@
 				<th>Name</th>
 				<th>Account ID</th>
 				<th></th>
-				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -26,8 +25,7 @@
 				<tr>
 					<td>@beneficiary["name"]</td>
 					<td>@beneficiary["beneficiaryAccountId"]</td>
-					<td><a class="btn btn-primary" asp-route="BeneficiaryEdit" asp-route-id=@beneficiary["id"]>Edit</a></td>
-					<td><a class="btn btn-danger" asp-route="BeneficiaryDeactivate" asp-route-id=@beneficiary["id"]>Deactivate</a></td>
+					<td><a class="btn btn-danger" asp-route="BeneficiaryDelete" asp-route-id=@beneficiary["id"]>Delete</a></td>
 				</tr>
 			}
 		</tbody>

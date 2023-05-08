@@ -123,6 +123,35 @@
 		</div>
 	</div>
 
+	@*Modal for AddBeneficiary*@
+	<div class="modal fade" id="addBeneficiaryModel" tabindex="-1" aria-labelledby="addBeneficiaryModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<form class="modal-content" asp-route="AddBeneficiary">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addBeneficiaryLabel">Enter Details</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div id="accountId" class="form-floating mt-3">
+						<div class="form-floating">
+							<input class="form-control" name="name" placeholder="Name" required />
+							<label class="form-label" for="name">Name</label>
+						</div>
+
+						<div class="form-floating mt-3">
+							<input class="form-control" name="accountId" placeholder="Account Number" required />
+							<label class="form-label" for="accountId">Account Number</label>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Add Beneficiary</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
@@ -162,9 +191,9 @@
 			headers: {
 				"sessionId": sessionId,
 			},
-			success: function(result) {
+			success: function (result) {
 				savings = result.savings;
-				for(i in savings) {
+				for (i in savings) {
 					accountIdOptions[accountIdOptions.length] = ('<option value="' + savings[i].id + '">' + savings[i].id + '</option>');
 				}
 				accountIdOptions = accountIdOptions.join('');

@@ -44,10 +44,10 @@ namespace DigitalBankManagement.Controllers.apis
 							user.RoleId == _context.Roles.First(role => role.Name == "user").Id);
 						break;
 					case "user":
-						res["savings"] = _context.Accounts.Where(account => account.Type == AccountModel.TypeSavings && account.Active).ToList();
-						res["fd"] = _context.FdAccounts.Include(fd => fd.Account).Where(acc => acc.Account.Active).ToList();
-						res["rd"] = _context.RdAccounts.Include(rd => rd.Account).Where(acc => acc.Account.Active).ToList();
-						res["loan"] = _context.Loans.Include(loan => loan.Account).Where(acc => acc.Account.Active).ToList();
+						res["savings"] = _context.Accounts.Where(account => account.UserId == user.Id && account.Type == AccountModel.TypeSavings && account.Active).ToList();
+						res["fd"] = _context.FdAccounts.Include(fd => fd.Account).Where(acc => acc.Account.UserId == user.Id && acc.Account.Active).ToList();
+						res["rd"] = _context.RdAccounts.Include(rd => rd.Account).Where(acc => acc.Account.UserId == user.Id && acc.Account.Active).ToList();
+						res["loan"] = _context.Loans.Include(loan => loan.Account).Where(acc => acc.Account.UserId == user.Id && acc.Account.Active).ToList();
 						break;
 				}
 				return Ok(res);

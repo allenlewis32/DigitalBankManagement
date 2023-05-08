@@ -47,8 +47,14 @@ namespace DigitalBankManagement.Controllers.apis
 			}
 		}
 
+		public class AddBeneficiaryModel
+		{
+			public string Name { get; set; }
+			public int AccountId { get; set; }
+		}
+
 		[HttpPost]
-		public IActionResult Post([FromHeader] string sessionId, [FromForm] string name, [FromForm] int accountId)
+		public IActionResult Post([FromHeader] string sessionId, AddBeneficiaryModel model)
 		{
 			try
 			{
@@ -57,9 +63,11 @@ namespace DigitalBankManagement.Controllers.apis
 				{
 					return Unauthorized();
 				}
-				
+
+				int accountIdInt = model.AccountId; // int.Parse(accountId);
+
 				// verify beneficiary account
-				var account = _context.Accounts.First(acc => acc.Id == accountId);
+				var account = _context.Accounts.First(acc => acc.Id == accountIdInt);
 				if (account == null || !account.Active || account.Type != AccountModel.TypeSavings)
 				{
 					return Conflict("Invalid account details");
@@ -67,8 +75,8 @@ namespace DigitalBankManagement.Controllers.apis
 				
 				_context.Beneficiaries.Add(new()
 				{
-					BeneficiaryAccountId = accountId,
-					Name = name,
+					BeneficiaryAccountId = accountIdInt,
+					Name = model.Name,
 					User = user,
 				});
 				_context.SaveChanges();
@@ -123,7 +131,7 @@ namespace DigitalBankManagement.Controllers.apis
 		}
 
 		[HttpDelete]
-		public IActionResult Delete([FromHeader] string sessionId, [FromForm] int beneficiaryId)
+		public IActionResult Delete([FromHeader] string sessionId, int beneficiaryId)
 		{
 			try
 			{

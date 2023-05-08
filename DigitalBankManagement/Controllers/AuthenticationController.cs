@@ -67,6 +67,18 @@ namespace DigitalBankManagement.Controllers
 		}
 
 		[HttpGet]
+		[Route("/Authentication/Logout", Name = "Logout")]
+		public IActionResult Logout()
+		{
+			Helper.Get(this, "Authentication", "Logout", Request.Cookies["sessionId"]!, TempData);
+			foreach(var cookie in Request.Cookies)
+			{
+				Response.Cookies.Delete(cookie.Key);
+			}
+			return RedirectToAction("Index", "Home");
+		}
+
+		[HttpGet]
 		[Route("/Authentication/Register", Name = "Register")]
 		public IActionResult Register()
 		{

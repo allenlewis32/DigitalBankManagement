@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Security.Cryptography;
 using System.Web;
+using DigitalBankManagement.Controllers;
 using DigitalBankManagement.Data;
 using DigitalBankManagement.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -163,6 +164,14 @@ namespace DigitalBankManagement
 			return res.Result;
 		}
 
+		// DELETE method helper
+		public static dynamic? Delete(Controller callingController, string controller, string? action, string? sessionId, ITempDataDictionary tempData, object? model = null)
+		{
+			Task<dynamic?> res = PerformMethod("delete", callingController, controller, action, sessionId, tempData, model);
+			res.Wait();
+			return res.Result;
+		}
+
 		// Performs the required HTTP method and returns the value
 		public static async Task<dynamic?> PerformMethod(string method, Controller callingController, string controller, string? action, string? sessionId, ITempDataDictionary tempData, object? model = null)
 		{
@@ -185,13 +194,29 @@ namespace DigitalBankManagement
 						if (model != null)
 						{
 							var query = HttpUtility.ParseQueryString("");
-							foreach(var item in (Dictionary<string, string>)model)
+							foreach (var item in (Dictionary<string, string>)model)
 							{
 								query[item.Key] = item.Value;
 							}
 							action += "?" + query.ToString();
 						}
 						var responseTask = client.GetAsync(action);
+						await responseTask;
+						result = responseTask.Result;
+						break;
+					}
+				case "delete":
+					{
+						if (model != null)
+						{
+							var query = HttpUtility.ParseQueryString("");
+							foreach (var item in (Dictionary<string, string>)model)
+							{
+								query[item.Key] = item.Value;
+							}
+							action += "?" + query.ToString();
+						}
+						var responseTask = client.DeleteAsync(action);
 						await responseTask;
 						result = responseTask.Result;
 						break;
