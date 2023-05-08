@@ -36,7 +36,7 @@ namespace DigitalBankManagement.Controllers
 					var creditOrDebit = "";
 					var creditOrDebitClass = "";
 					var remarks = "";
-					if (transaction["credit"].ToString() == "true")
+					if ((bool)transaction["credit"])
 					{
 						creditOrDebit = "Credit";
 						creditOrDebitClass = "text-success";

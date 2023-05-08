@@ -139,7 +139,7 @@
 						</div>
 
 						<div class="form-floating mt-3">
-							<input class="form-control" name="accountId" placeholder="Account Number" required />
+							<input type="number" class="form-control" name="accountId" placeholder="Account Number" required />
 							<label class="form-label" for="accountId">Account Number</label>
 						</div>
 					</div>
@@ -147,6 +147,36 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 					<button type="submit" class="btn btn-primary">Add Beneficiary</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	@*Modal for SendMoney*@
+	<div class="modal fade" id="sendMoneyModel" tabindex="-1" aria-labelledby="sendMoneyModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<form class="modal-content" asp-route="BeneficiarySend">
+				<div class="modal-header">
+					<h5 class="modal-title" id="sendMoneyLabel">Enter Details</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<input type="hidden" id="beneficiaryId" name="beneficiaryId" />
+				<div class="modal-body">
+					<div id="accountId" class="form-floating mt-3">
+						<div id="debitFrom" class="form-floating mt-3">
+							<select name="accountId" class="form-select">
+							</select>
+							<label class="form-label">Account ID to debit money from</label>
+						</div>
+						<div class="form-floating mt-3">
+							<input class="form-control" name="amount" placeholder="Amount" required />
+							<label class="form-label" for="amount">Amount</label>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Send</button>
 				</div>
 			</form>
 		</div>

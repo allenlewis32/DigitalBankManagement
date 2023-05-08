@@ -58,5 +58,26 @@ namespace DigitalBankManagement.Controllers
 				return RedirectToRoute("Login");
 			}
 		}
+
+		[HttpPost]
+		[Route("/Beneficiary/BeneficiarySend", Name = "BeneficiarySend")]
+		public IActionResult BeneficiarySend(string accountId, string beneficiaryId, string amount)
+		{
+			try
+			{
+				var parameters = new
+				{
+					accountId,
+					beneficiaryId,
+					amount
+				};
+				dynamic? res = Helper.Post(this, "Transaction", null, Request.Cookies["sessionId"], TempData, parameters);
+				return RedirectToRoute("BeneficiaryIndex");
+			}
+			catch // unauthorized
+			{
+				return RedirectToRoute("Login");
+			}
+		}
 	}
 }

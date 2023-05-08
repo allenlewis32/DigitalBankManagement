@@ -16,9 +16,16 @@ namespace DigitalBankManagement.Controllers.apis
 			_context = context;
 		}
 
+		public class Model
+		{
+			public int AccountId { get; set; }
+			public int BeneficiaryId { get; set; }
+			public int Amount { get; set; }
+		}
+
 		// performs transactions
 		[HttpPost]
-		public IActionResult Post([FromHeader] string sessionId, [FromForm] int accountId, [FromForm] int beneficiaryId, [FromForm] int amount)
+		public IActionResult Post([FromHeader] string sessionId, Model model)
 		{
 			try
 			{
@@ -29,7 +36,7 @@ namespace DigitalBankManagement.Controllers.apis
 				}
 
 				// verify accountId belongs to user
-				var account = _context.Accounts.FirstOrDefault(acc => acc.Id == accountId);
+				var account = _context.Accounts.FirstOrDefault(acc => acc.Id == model.AccountId);
 				if (account == null)
 				{
 					return BadRequest();
@@ -40,13 +47,13 @@ namespace DigitalBankManagement.Controllers.apis
 				}
 
 				var beneficiary = _context.Beneficiaries.Include(b => b.BeneficiaryAccount)
-					.FirstOrDefault(b => b.Id == beneficiaryId);
+					.FirstOrDefault(b => b.Id == model.BeneficiaryId);
 				if(beneficiary == null)
 				{
 					return BadRequest();
 				}
 				var beneficiaryAccount = beneficiary.BeneficiaryAccount;
-				return Helper.TransferMoney(_context, this, account, amount, beneficiaryAccount);
+				return Helper.TransferMoney(_context, this, account, model.Amount, beneficiaryAccount);
 			}
 			catch(Exception ex)
 			{
