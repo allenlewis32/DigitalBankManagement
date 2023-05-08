@@ -11,7 +11,7 @@
 	string? successMessage = (string?)TempData["successMessage"];
 	if (successMessage != null)
 	{
-		<div id="successMessage" class="alert alert-danger alert-dismissible">
+		<div id="successMessage" class="alert alert-success alert-dismissible">
 			@successMessage
 			<button type="button" class="btn-close" onclick="document.getElementById('successMessage').remove()"></button>
 		</div>

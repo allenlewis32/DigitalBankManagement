@@ -1,0 +1,40 @@
+﻿@{
+	ViewData["title"] = "ATM simulator";
+}
+
+<style>
+	.atm {
+		width: 100%;
+		max-width: 330px;
+		padding: 15px;
+		margin: auto;
+	}
+
+	input,select {
+		margin-bottom: 0.5rem;
+	}
+</style>
+
+<div class="atm border rounded-3 bg-light text-center">
+	<h1 class="h3 mb-3 fw-normal">ATM</h1>
+
+	<form asp-action="ATMTransact">
+		<select class="form-select" name="action">
+			<option value="withdraw" selected>Withdraw</option>
+			<option value="deposit">Deposit</option>
+		</select>
+		<div class="form-floating">
+			<input class="form-control" name="cardNumber" placeholder="Card Number" />
+			<label class="form-label" for="cardNumber">Card Number</label>
+		</div>
+		<div class="form-floating">
+			<input type="number" min="1" class="form-control" name="pin" placeholder="PIN" />
+			<label class="form-label" for="pin">PIN</label>
+		</div>
+		<div class="form-floating">
+			<input type="number" min="1" class="form-control" name="amount" placeholder="Amount" />
+			<label class="form-label" for="amount">Amount</label>
+		</div>
+		<button class="w-100 btn btn-lg btn-primary mt-4 mb-3" type="submit">Perform Transaction</button>
+	</form>
+</div>

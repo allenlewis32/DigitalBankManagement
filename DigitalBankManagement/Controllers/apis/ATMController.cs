@@ -15,25 +15,32 @@ namespace DigitalBankManagement.Controllers.apis
 			_context = context;
 		}
 
+		public class Model
+		{
+			public string CardNumber { get; set; }
+			public decimal Amount { get; set; }
+			public int Pin { get; set; }
+		}
+
 		[HttpPost]
 		[Route("Credit")]
-		public IActionResult Credit([FromForm] string cardNumber, [FromForm] decimal amount, [FromForm] int pin)
+		public IActionResult Credit(Model model)
 		{
 			try
 			{
 				// verify card
-				decimal cardId = decimal.Parse(cardNumber);
+				decimal cardId = decimal.Parse(model.CardNumber);
 				var card = _context.Cards.Include(card => card.Account).FirstOrDefault(card => card.Id == cardId && card.Expiry > DateTime.UtcNow);
 				if (card == null)
 				{
 					return BadRequest();
 				}
-				if(card.Pin != pin)
+				if(card.Pin != model.Pin)
 				{
 					return Unauthorized();
 				}
 
-				return Helper.TransferMoney(_context, this, null, amount, card.Account);
+				return Helper.TransferMoney(_context, this, null, model.Amount, card.Account);
 			}
 			catch
 			{
@@ -43,23 +50,23 @@ namespace DigitalBankManagement.Controllers.apis
 
 		[HttpPost]
 		[Route("Debit")]
-		public IActionResult Debit([FromForm] string cardNumber, [FromForm] decimal amount, [FromForm] int pin)
+		public IActionResult Debit(Model model)
 		{
 			try
 			{
 				// verify card
-				decimal cardId = decimal.Parse(cardNumber);
+				decimal cardId = decimal.Parse(model.CardNumber);
 				var card = _context.Cards.Include(card => card.Account).FirstOrDefault(card => card.Id == cardId && card.Expiry > DateTime.UtcNow);
 				if (card == null)
 				{
 					return BadRequest();
 				}
-				if (card.Pin != pin)
+				if (card.Pin != model.Pin)
 				{
 					return Unauthorized();
 				}
 
-				return Helper.TransferMoney(_context, this, card.Account, amount, null);
+				return Helper.TransferMoney(_context, this, card.Account, model.Amount, null);
 			}
 			catch
 			{

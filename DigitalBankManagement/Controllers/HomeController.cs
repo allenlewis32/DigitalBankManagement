@@ -26,7 +26,7 @@ namespace DigitalBankManagement.Controllers
 					switch (user.Role.Name)
 					{
 						case "admin":
-							controller = "Admin";
+							controller = "LoanApplication";
 							break;
 						case "manager":
 							controller = "Manager";

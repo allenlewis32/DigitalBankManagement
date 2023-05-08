@@ -25,11 +25,6 @@ namespace DigitalBankManagement.Controllers
 		{
 			try
 			{
-				if(pin.Length < 1 || pin.Length > 4)
-				{
-					TempData["errorMessage"] = "Pin must be 4 digits";
-					return RedirectToRoute("CardIndex");
-				}
 				var parameters = new
 				{
 					accountId,
