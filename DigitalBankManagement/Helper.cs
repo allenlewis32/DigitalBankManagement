@@ -1,9 +1,8 @@
 ﻿using System.Net;
 using System.Security.Cryptography;
-using Azure;
+using System.Web;
 using DigitalBankManagement.Data;
 using DigitalBankManagement.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
@@ -183,6 +182,15 @@ namespace DigitalBankManagement
 					}
 				case "get":
 					{
+						if (model != null)
+						{
+							var query = HttpUtility.ParseQueryString("");
+							foreach(var item in (Dictionary<string, string>)model)
+							{
+								query[item.Key] = item.Value;
+							}
+							action += "?" + query.ToString();
+						}
 						var responseTask = client.GetAsync(action);
 						await responseTask;
 						result = responseTask.Result;

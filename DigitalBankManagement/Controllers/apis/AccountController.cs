@@ -1,11 +1,7 @@
-﻿using System.Security.Principal;
-using DigitalBankManagement.Data;
+﻿using DigitalBankManagement.Data;
 using DigitalBankManagement.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace DigitalBankManagement.Controllers.apis
 {
@@ -56,9 +52,9 @@ namespace DigitalBankManagement.Controllers.apis
 				}
 				return Ok(res);
 			}
-			catch
+			catch (Exception ex)
 			{
-				return Problem();
+				return Problem(ex.Message);
 			}
 		}
 
@@ -226,7 +222,7 @@ namespace DigitalBankManagement.Controllers.apis
 
 		[HttpGet]
 		[Route("GetStatement")]
-		public IActionResult GetStatement([FromHeader] string sessionId, int accountId)
+		public IActionResult GetStatement([FromHeader] string sessionId, string accountId)
 		{
 			try
 			{
@@ -235,32 +231,42 @@ namespace DigitalBankManagement.Controllers.apis
 				{
 					return Unauthorized();
 				}
-				var account = _context.Accounts.First(account => account.Id == accountId);
+				int accountIdInt = int.Parse(accountId);
+				var account = _context.Accounts.First(account => account.Id == accountIdInt);
 				if (account.UserId != user.Id)
 				{
 					return Unauthorized();
 				}
-				var statements = new List<TransactionModel>();
+				var statements = new List<dynamic>();
 				_context.Transactions
-					.Where(transaction => transaction.FromAccountId == accountId || transaction.ToAccountId == accountId)
+					.Where(transaction => transaction.FromAccountId == accountIdInt || transaction.ToAccountId == accountIdInt)
 					.ForEachAsync(transaction =>
 					{
-						// create new objects to prevent account information from leaking
-						statements.Add(new()
+						var credit = transaction.ToAccountId == accountIdInt;
+						int? otherAccountId = null;
+						if (credit)
 						{
-							Id = transaction.Id,
-							FromAccountId = transaction.FromAccountId,
-							ToAccountId = transaction.ToAccountId,
-							Time = transaction.Time,
-							Amount = transaction.Amount
+							otherAccountId = transaction.FromAccountId;
+						} else
+						{
+							otherAccountId = transaction.ToAccountId;
+						}
+						// create new objects to prevent account information from leaking
+						statements.Add(new
+						{
+							transaction.Id,
+							credit,
+							otherAccountId,
+							transaction.Time,
+							transaction.Amount
 						});
 					})
 					.Wait();
 				return Ok(statements);
 			}
-			catch
+			catch (Exception ex)
 			{
-				return Problem();
+				return Problem(ex.Message);
 			}
 		}
 	}

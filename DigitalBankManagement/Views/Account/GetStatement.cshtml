@@ -1,0 +1,29 @@
+﻿@using Newtonsoft.Json.Linq;
+
+@{
+	ViewData["title"] = "Statement";
+}
+
+<h1>Satement</h1>
+<table class="table">
+	<thead>
+		<tr>
+			<th>Credit/Debit</th>
+			<th>Remarks</th>
+			<th>Amount</th>
+			<th>Date and Time</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var transaction in (JArray)(ViewData["statement"]!))
+		{
+			
+			<tr>
+				<td class="@transaction["creditOrDebitClass"]">@transaction["creditOrDebit"]</td>
+				<td>@transaction["remarks"]</td>
+				<td>@transaction["amount"]</td>
+				<td>@transaction["time"]</td>
+			</tr>
+		}
+	</tbody>
+</table>

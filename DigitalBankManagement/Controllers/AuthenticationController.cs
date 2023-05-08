@@ -27,10 +27,25 @@ namespace DigitalBankManagement.Controllers
 			return View();
 		}
 
-		// sets sessionId and redirects to the appropriate home page depending upon the role of the user
+		// sets cookie and redirects to the appropriate home page depending upon the role of the user
 		private IActionResult SetCookieAndRedirect(dynamic json)
 		{
 			Response.Cookies.Append("sessionId", (string)json.sessionId, new CookieOptions()
+			{
+				MaxAge = TimeSpan.FromDays(7),
+			});
+
+			Response.Cookies.Append("role", (string)json.role, new CookieOptions()
+			{
+				MaxAge = TimeSpan.FromDays(7),
+			});
+
+			Response.Cookies.Append("firstName", (string)json.firstName, new CookieOptions()
+			{
+				MaxAge = TimeSpan.FromDays(7),
+			});
+
+			Response.Cookies.Append("lastName", (string)json.lastName, new CookieOptions()
 			{
 				MaxAge = TimeSpan.FromDays(7),
 			});

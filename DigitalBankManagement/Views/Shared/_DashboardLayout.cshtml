@@ -92,11 +92,6 @@
 					</div>
 					<div id="debitFrom" class="form-floating mt-3">
 						<select name="debitFrom" class="form-select">
-							@foreach (var account in (JArray)((dynamic)ViewData["accounts"]!).savings)
-							{
-								var id = account["id"];
-								<option value="@id">@id</option>
-							}
 						</select>
 						<label class="form-label">Account ID to debit money from</label>
 					</div>
@@ -104,6 +99,29 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 					<button type="submit" class="btn btn-primary">Create</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	@*Modal for view statement*@
+	<div class="modal fade" id="viewStatementModel" tabindex="-1" aria-labelledby="viewStatementModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<form class="modal-content" asp-route="GetStatement" method="get">
+				<div class="modal-header">
+					<h5 class="modal-title" id="viewStatementModelLabel">Select Account Number</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div id="accountId" class="form-floating mt-3">
+						<select name="accountId" class="form-select">
+						</select>
+						<label class="form-label">Account Number</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">View Statement</button>
 				</div>
 			</form>
 		</div>
@@ -137,6 +155,28 @@
 		});
 
 		$("#type").change(); // manually trigger change method for initial value
+
+		// load account ids and populate 'select' values
+		modals = ["debitFrom", "accountId"];
+		accountIdOptions = [];
+		sessionId = ('; ' + document.cookie).split(`; sessionId=`).pop().split(';')[0];
+		$.ajax({
+			url: "/api/Account",
+			type: "GET",
+			headers: {
+				"sessionId": sessionId,
+			},
+			success: function(result) {
+				savings = result.savings;
+				for(i in savings) {
+					accountIdOptions[accountIdOptions.length] = ('<option value="' + savings[i].id + '">' + savings[i].id + '</option>');
+				}
+				accountIdOptions = accountIdOptions.join('');
+				for (i in modals) {
+					$(`select[name=${modals[i]}]`).empty().append(accountIdOptions);
+				}
+			}
+		});
 	</script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
