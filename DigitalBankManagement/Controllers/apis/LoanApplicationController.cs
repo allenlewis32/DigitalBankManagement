@@ -96,7 +96,7 @@ namespace DigitalBankManagement.Controllers.apis
 				application.Status = 1;
 				AccountModel account = new()
 				{
-					UserId = user.Id,
+					UserId = application.UserId,
 					Amount = application.Amount,
 					DateCreated = DateTime.UtcNow,
 					Active = true,
@@ -126,7 +126,7 @@ namespace DigitalBankManagement.Controllers.apis
 			decimal R = _context.Interests.First().Loan;
 			int N = loan.Duration;
 			decimal t = (decimal)Math.Pow((double)(1 + R / 1200), N);
-			decimal emi = P * R * t / (t - 1);
+			decimal emi = P * R * t / (t - 1) / (N * 12);
 			loan.Emi = emi;
 		}
 	}
