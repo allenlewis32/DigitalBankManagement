@@ -93,9 +93,6 @@ namespace DigitalBankManagement.Controllers
 				using var client = new HttpClient();
 				string baseUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}/api/Authentication/"; // gets the base URL of this website
 				client.BaseAddress = new Uri(baseUrl);
-				/*HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(model));
-				var responseTask = client.PostAsync("Register", httpContent); // don't use await as we have to check result
-				responseTask.Wait();*/
 				var responseTask = client.PostAsJsonAsync("Register", model);
 				responseTask.Wait();
 
@@ -105,26 +102,7 @@ namespace DigitalBankManagement.Controllers
 					var content = await result.Content.ReadAsStringAsync();
 					dynamic json = JsonConvert.DeserializeObject(content);
 
-					// set cookies
-					Response.Cookies.Append("sessionId", (string)json.sessionId, new CookieOptions()
-					{
-						MaxAge = TimeSpan.FromDays(7),
-					});
-
-					string controller = "";
-					switch ((string) json.role)
-					{
-						case "admin":
-							controller = "LoanApplication";
-							break;
-						case "manager":
-							controller = "Manager";
-							break;
-						case "user":
-							controller = "User";
-							break;
-					}
-					return RedirectToAction("Index", controller);
+					return SetCookieAndRedirect(json);
 				}
 				else
 				{
